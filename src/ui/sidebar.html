@@ -52,25 +52,63 @@
     </div>
   </div>
 
-  <!-- Tabela de Resultados -->
-  <div class="dts-table-container">
-    <table class="dts-table">
-      <thead>
-        <tr>
-          <th style="width: 40px; text-align: center;">#</th>
-          <th>data-test-id</th>
-          <th data-i18n="elementType" style="width: 100px;">Tipo</th>
-          <th data-i18n="actions" style="width: 80px; text-align: center;">Ações</th>
-        </tr>
-      </thead>
-      <tbody id="dts-table-body">
-        <tr>
-          <td colspan="4" class="dts-table__empty" data-i18n="emptyScan">
-            Clique em "Escanear" para listar todos os data-test-id
-          </td>
-        </tr>
-      </tbody>
-    </table>
+  <!-- Tabs -->
+  <div class="dts-tabs">
+    <button id="dts-tab-found" class="dts-tab dts-tab--active" data-tab="found">
+      <i class="ph ph-check-circle"></i>
+      <span data-i18n="totalElements">Total de elementos encontrados</span>
+      <span class="dts-tab__badge" id="dts-found-count">0</span>
+    </button>
+    <button id="dts-tab-missing" class="dts-tab" data-tab="missing">
+      <i class="ph ph-warning"></i>
+      <span data-i18n="missingTitle">Sem data-test-id</span>
+      <span class="dts-tab__badge dts-tab__badge--warning" id="dts-missing-count">0</span>
+    </button>
+  </div>
+
+  <!-- Painel: Encontrados -->
+  <div id="dts-panel-found" class="dts-panel dts-panel--active">
+    <div class="dts-table-container">
+      <table class="dts-table">
+        <thead>
+          <tr>
+            <th style="width: 36px; text-align: center;">#</th>
+            <th style="width: 55%;">data-test-id</th>
+            <th data-i18n="elementType" style="width: 80px;">Tipo</th>
+            <th data-i18n="actions" style="width: 70px; text-align: center;">Ações</th>
+          </tr>
+        </thead>
+        <tbody id="dts-table-body">
+          <tr>
+            <td colspan="4" class="dts-table__empty" data-i18n="emptyScan">
+              Clique em "Escanear" para listar todos os data-test-id
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Painel: Sem data-test-id -->
+  <div id="dts-panel-missing" class="dts-panel">
+    <div class="dts-table-container">
+      <table class="dts-table">
+        <thead>
+          <tr>
+            <th style="width: 36px; text-align: center;">#</th>
+            <th data-i18n="missingElement" style="width: 55%;">Elemento</th>
+            <th data-i18n="missingContext">Contexto</th>
+          </tr>
+        </thead>
+        <tbody id="dts-missing-body">
+          <tr>
+            <td colspan="3" class="dts-table__empty" data-i18n="emptyScan">
+              Clique em "Escanear" para listar todos os data-test-id
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 
   <!-- Footer -->

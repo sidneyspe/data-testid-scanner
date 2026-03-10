@@ -31,6 +31,7 @@
   class SidebarController {
     constructor() {
       this.scannedData = [];
+      this.missingData = [];
       this.elements = {};
       this.currentLanguage = 'pt';
     }
@@ -65,6 +66,13 @@
         totalCount: document.getElementById('dts-total-count'),
         alert: document.getElementById('dts-alert'),
         alertMessage: document.getElementById('dts-alert-message'),
+        tabFound: document.getElementById('dts-tab-found'),
+        tabMissing: document.getElementById('dts-tab-missing'),
+        panelFound: document.getElementById('dts-panel-found'),
+        panelMissing: document.getElementById('dts-panel-missing'),
+        foundCount: document.getElementById('dts-found-count'),
+        missingCount: document.getElementById('dts-missing-count'),
+        missingBody: document.getElementById('dts-missing-body'),
       };
 
       // Logging detalhado
@@ -119,6 +127,14 @@
           console.log('[DTS] ✓ Listener close configurado');
         }
 
+        // Tabs
+        if (this.elements.tabFound) {
+          this.elements.tabFound.addEventListener('click', () => this.switchTab('found'));
+        }
+        if (this.elements.tabMissing) {
+          this.elements.tabMissing.addEventListener('click', () => this.switchTab('missing'));
+        }
+
         // Botão Tema
         if (this.elements.themeBtn) {
           this.elements.themeBtn.addEventListener('click', () => this.toggleTheme());
@@ -147,9 +163,8 @@
         console.log('[DTS] Iniciando scan...');
         this.setButtonLoading(this.elements.scanBtn, true);
 
-        // Extrair data-test-id
+        // 1. Extrair elementos COM data-test-id
         const elements = document.querySelectorAll('[data-test-id]');
-        console.log(`[DTS] Encontrados ${elements.length} elementos com data-test-id`);
         this.scannedData = [];
 
         elements.forEach((element) => {
@@ -159,14 +174,24 @@
           });
         });
 
-        console.log(`[DTS] Dados extraídos: ${this.scannedData.length} elementos`);
+        // 2. Detectar elementos interativos SEM data-test-id
+        this.missingData = this.findMissingTestIds();
 
-        // Renderizar tabela
+        console.log(`[DTS] Encontrados: ${this.scannedData.length} com, ${this.missingData.length} sem data-test-id`);
+
+        // Renderizar tabelas
         this.renderTable();
+        this.renderMissingTable();
 
-        // Mostrar mensagem de sucesso
+        // Atualizar badges das tabs
+        this.elements.foundCount.textContent = this.scannedData.length;
+        this.elements.missingCount.textContent = this.missingData.length;
+        this.elements.totalCount.textContent = this.scannedData.length;
+
+        // Mostrar mensagem
         const message = this.scannedData.length > 0
-          ? `${this.scannedData.length} ${this.t('elementsFound')}`
+          ? `${this.scannedData.length} ${this.t('elementsFound')}` +
+            (this.missingData.length > 0 ? ` | ${this.missingData.length} ${this.t('missingCount')}` : '')
           : this.t('noDataFound');
 
         this.showAlert(message, this.scannedData.length > 0 ? 'success' : 'info');
@@ -174,6 +199,13 @@
         // Habilitar botões de exportação e cópia
         this.elements.exportBtn.disabled = this.scannedData.length === 0;
         this.elements.copyBtn.disabled = this.scannedData.length === 0;
+
+        // Se tem missing, destacar a tab
+        if (this.missingData.length > 0) {
+          this.elements.missingCount.classList.add('dts-tab__badge--warning');
+        } else {
+          this.elements.missingCount.classList.remove('dts-tab__badge--warning');
+        }
 
         console.log('[DTS] ✅ Scan concluído com sucesso');
       } catch (error) {
@@ -183,6 +215,98 @@
       } finally {
         this.setButtonLoading(this.elements.scanBtn, false);
       }
+    }
+
+    /**
+     * Seletores de elementos interativos que devem ter data-test-id
+     */
+    static INTERACTIVE_SELECTORS = [
+      'button',
+      'a[href]',
+      'input',
+      'select',
+      'textarea',
+      'form',
+      '[role="button"]',
+      '[role="link"]',
+      '[role="tab"]',
+      '[role="checkbox"]',
+      '[role="radio"]',
+      '[role="switch"]',
+      '[role="menuitem"]',
+      '[role="option"]',
+      '[contenteditable="true"]',
+    ];
+
+    /**
+     * Encontra elementos interativos sem data-test-id
+     */
+    findMissingTestIds() {
+      const sidebarId = 'data-testid-scanner-sidebar';
+      const toggleId = 'dts-toggle-btn';
+      const selector = SidebarController.INTERACTIVE_SELECTORS.join(', ');
+      const allInteractive = document.querySelectorAll(selector);
+      const missing = [];
+
+      allInteractive.forEach((el) => {
+        // Ignorar elementos da própria extensão
+        if (el.closest(`#${sidebarId}`) || el.id === toggleId) return;
+        // Ignorar elementos ocultos
+        if (el.offsetParent === null && el.tagName !== 'INPUT' && el.getAttribute('type') !== 'hidden') return;
+        // Ignorar se já tem data-test-id
+        if (el.hasAttribute('data-test-id')) return;
+
+        const tagName = el.tagName.toLowerCase();
+        const context = this.getElementContext(el);
+
+        missing.push({ tagName, context, element: el });
+      });
+
+      return missing;
+    }
+
+    /**
+     * Gera um contexto legível para identificar o elemento
+     */
+    getElementContext(el) {
+      const parts = [];
+      const tag = el.tagName.toLowerCase();
+
+      // Tipo do input
+      if (tag === 'input' || tag === 'select' || tag === 'textarea') {
+        const type = el.getAttribute('type') || tag;
+        const name = el.getAttribute('name');
+        const placeholder = el.getAttribute('placeholder');
+        const label = el.getAttribute('aria-label');
+        parts.push(`type="${type}"`);
+        if (name) parts.push(`name="${name}"`);
+        else if (placeholder) parts.push(`"${placeholder}"`);
+        else if (label) parts.push(`"${label}"`);
+      }
+
+      // Links
+      if (tag === 'a') {
+        const text = el.textContent.trim().substring(0, 30);
+        if (text) parts.push(`"${text}"`);
+      }
+
+      // Botões
+      if (tag === 'button' || el.getAttribute('role') === 'button') {
+        const text = el.textContent.trim().substring(0, 30);
+        const label = el.getAttribute('aria-label');
+        if (text) parts.push(`"${text}"`);
+        else if (label) parts.push(`aria="${label}"`);
+      }
+
+      // ID ou classes
+      if (el.id) {
+        parts.push(`#${el.id}`);
+      } else if (el.className && typeof el.className === 'string') {
+        const cls = el.className.split(' ').slice(0, 2).join('.');
+        if (cls) parts.push(`.${cls}`);
+      }
+
+      return parts.join(' ') || tag;
     }
 
     /**
@@ -330,6 +454,67 @@
     }
 
     /**
+     * Renderiza a tabela de elementos sem data-test-id
+     */
+    renderMissingTable() {
+      if (!this.elements.missingBody) return;
+
+      if (this.missingData.length === 0) {
+        this.elements.missingBody.innerHTML = `
+          <tr>
+            <td colspan="3" class="dts-table__empty">
+              <i class="ph ph-check-circle" style="color: var(--color-success); margin-right: 6px;"></i>
+              ${this.t('noMissingFound')}
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      this.elements.missingBody.innerHTML = this.missingData
+        .map(
+          (item, index) => `
+            <tr>
+              <td class="dts-table__index">${index + 1}</td>
+              <td class="dts-table__id">
+                <code class="dts-table__id-code dts-table__id-code--missing">&lt;${this.escapeHtml(item.tagName)}&gt;</code>
+              </td>
+              <td class="dts-table__context">${this.escapeHtml(item.context)}</td>
+            </tr>
+          `
+        )
+        .join('');
+
+      // Hover highlight: ao passar o mouse na linha, destaca o elemento na página
+      this.elements.missingBody.querySelectorAll('tr').forEach((row, index) => {
+        const el = this.missingData[index]?.element;
+        if (!el) return;
+
+        row.addEventListener('mouseenter', () => {
+          el.style.outline = '2px solid #f56565';
+          el.style.outlineOffset = '2px';
+        });
+        row.addEventListener('mouseleave', () => {
+          el.style.outline = '';
+          el.style.outlineOffset = '';
+        });
+      });
+    }
+
+    /**
+     * Alterna entre as tabs
+     */
+    switchTab(tab) {
+      // Atualizar estado das tabs
+      this.elements.tabFound.classList.toggle('dts-tab--active', tab === 'found');
+      this.elements.tabMissing.classList.toggle('dts-tab--active', tab === 'missing');
+
+      // Atualizar painéis visíveis
+      this.elements.panelFound.classList.toggle('dts-panel--active', tab === 'found');
+      this.elements.panelMissing.classList.toggle('dts-panel--active', tab === 'missing');
+    }
+
+    /**
      * Copia um item específico para o clipboard
      */
     copyItemToClipboard(text, button) {
@@ -442,9 +627,12 @@
         element.textContent = this.t(key);
       });
 
-      // Atualizar tabela se houver dados
+      // Atualizar tabelas se houver dados
       if (this.scannedData.length > 0) {
         this.renderTable();
+      }
+      if (this.missingData.length > 0) {
+        this.renderMissingTable();
       }
     }
 

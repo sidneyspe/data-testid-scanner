@@ -44,6 +44,14 @@ const I18N = (() => {
       // Info
       copySuccess: 'Dados copiados para o clipboard!',
       copyError: 'Erro ao copiar para o clipboard.',
+
+      // Missing data-test-id
+      missingTitle: 'Sem data-test-id',
+      missingDescription: 'Elementos interativos que deveriam ter data-test-id',
+      missingElement: 'Elemento',
+      missingContext: 'Contexto',
+      missingCount: 'elementos sem data-test-id',
+      noMissingFound: 'Todos os elementos interativos possuem data-test-id!',
     },
 
     en: {
@@ -82,6 +90,14 @@ const I18N = (() => {
       // Info
       copySuccess: 'Data copied to clipboard!',
       copyError: 'Error copying to clipboard.',
+
+      // Missing data-test-id
+      missingTitle: 'Missing data-test-id',
+      missingDescription: 'Interactive elements that should have data-test-id',
+      missingElement: 'Element',
+      missingContext: 'Context',
+      missingCount: 'elements missing data-test-id',
+      noMissingFound: 'All interactive elements have data-test-id!',
     },
 
     es: {
@@ -120,6 +136,14 @@ const I18N = (() => {
       // Info
       copySuccess: '¡Datos copiados al portapapeles!',
       copyError: 'Error al copiar al portapapeles.',
+
+      // Missing data-test-id
+      missingTitle: 'Sin data-test-id',
+      missingDescription: 'Elementos interactivos que deberían tener data-test-id',
+      missingElement: 'Elemento',
+      missingContext: 'Contexto',
+      missingCount: 'elementos sin data-test-id',
+      noMissingFound: '¡Todos los elementos interactivos tienen data-test-id!',
     },
   };
 
