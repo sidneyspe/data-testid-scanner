@@ -9,7 +9,6 @@ chrome.runtime.onInstalled.addListener((details) => {
     chrome.storage.local.set({
       dts_preferred_language: 'pt',
     });
-    console.log('Data-TestID Scanner instalado com sucesso!');
   }
 });
 
@@ -19,13 +18,14 @@ chrome.action.onClicked.addListener((tab) => {
   chrome.tabs.sendMessage(tab.id, { action: 'toggleSidebar' }, (response) => {
     if (chrome.runtime.lastError) {
       // Content script não está carregado ainda, injetar manualmente
-      console.log('Content script não encontrado, injetando...');
       chrome.scripting.executeScript({
         target: { tabId: tab.id },
-        files: ['src/i18n/i18n.js', 'src/content/sidebar.js', 'src/content/sidebar-controller.js'],
+        files: [
+          'src/i18n/i18n.js',
+          'src/content/sidebar.js',
+          'src/content/sidebar-controller.js',
+        ],
       });
     }
   });
 });
-
-console.log('Data-TestID Scanner Background Service Worker carregado');

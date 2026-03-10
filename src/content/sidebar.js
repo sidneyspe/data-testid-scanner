@@ -8,7 +8,6 @@
 
 // Evitar múltiplas injeções
 if (window.__DTS_LOADED__) {
-  console.log('Data-TestID Scanner já foi carregado');
   window.dispatchEvent(new CustomEvent('dts-toggle-sidebar'));
 } else {
   window.__DTS_LOADED__ = true;
@@ -31,9 +30,6 @@ if (window.__DTS_LOADED__) {
         // Inicializar I18N (já carregado pelo manifest como content script)
         if (window.I18N && typeof window.I18N.init === 'function') {
           window.I18N.init();
-          console.log('[DTS] ✓ I18N inicializado');
-        } else {
-          console.warn('[DTS] ⚠️ I18N não encontrado, continuando sem tradução');
         }
 
         // Injetar CSS
@@ -53,8 +49,6 @@ if (window.__DTS_LOADED__) {
 
         // Emitir evento de conclusão (sidebar-controller.js escuta isso)
         window.dispatchEvent(new CustomEvent('dts-ready'));
-
-        console.log('[DTS] ✅ Scanner inicializado com sucesso');
       } catch (error) {
         console.error('Erro ao inicializar Data-TestID Scanner:', error);
       }
@@ -75,9 +69,10 @@ if (window.__DTS_LOADED__) {
      * Injeta o HTML do sidebar e toggle button
      */
     async injectHTML() {
-      console.log('[DTS] Injetando HTML do sidebar...');
       try {
-        const response = await fetch(chrome.runtime.getURL('src/ui/sidebar.html'));
+        const response = await fetch(
+          chrome.runtime.getURL('src/ui/sidebar.html'),
+        );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -86,7 +81,6 @@ if (window.__DTS_LOADED__) {
         // Verificar se o sidebar já existe
         const existing = document.getElementById('data-testid-scanner-sidebar');
         if (existing) {
-          console.log('[DTS] ⚠️  Sidebar já existe, não injetando novamente');
           return;
         }
 
@@ -97,8 +91,6 @@ if (window.__DTS_LOADED__) {
         while (tempDiv.firstElementChild) {
           document.body.appendChild(tempDiv.firstElementChild);
         }
-
-        console.log('[DTS] ✅ Sidebar e toggle button injetados no DOM');
       } catch (error) {
         console.error('[DTS] ❌ Erro ao injetar HTML:', error);
         throw error;
@@ -111,7 +103,9 @@ if (window.__DTS_LOADED__) {
      */
     async loadPhosphorIcons() {
       // 1. Registrar a fonte com URL absoluta da extensão
-      const fontUrl = chrome.runtime.getURL('src/vendor/phosphor/Phosphor.woff2');
+      const fontUrl = chrome.runtime.getURL(
+        'src/vendor/phosphor/Phosphor.woff2',
+      );
       const fontFace = new FontFace('Phosphor', `url("${fontUrl}")`, {
         weight: 'normal',
         style: 'normal',
@@ -121,7 +115,6 @@ if (window.__DTS_LOADED__) {
       try {
         const loadedFont = await fontFace.load();
         document.fonts.add(loadedFont);
-        console.log('[DTS] ✓ Phosphor font carregada');
       } catch (error) {
         console.error('[DTS] ❌ Erro ao carregar Phosphor font:', error);
       }
@@ -132,7 +125,6 @@ if (window.__DTS_LOADED__) {
       link.href = chrome.runtime.getURL('src/vendor/phosphor/style.css');
       link.id = 'dts-phosphor-icons';
       document.head.appendChild(link);
-      console.log('[DTS] ✓ Phosphor Icons CSS carregado');
     }
 
     /**

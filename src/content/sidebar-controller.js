@@ -4,8 +4,6 @@
  */
 
 (function () {
-  console.log('[DTS] Sidebar Controller iniciando...');
-
   /**
    * Aguarda o sidebar estar pronto (HTML injetado no DOM)
    * Escuta o evento 'dts-ready' emitido pelo sidebar.js após injetar o HTML
@@ -13,9 +11,6 @@
   function waitForDependencies(callback) {
     const sidebar = document.getElementById('data-testid-scanner-sidebar');
     if (sidebar) {
-      console.log(
-        '[DTS] ✅ Sidebar já disponível no DOM, inicializando controller',
-      );
       callback();
       return;
     }
@@ -24,9 +19,6 @@
     window.addEventListener(
       'dts-ready',
       () => {
-        console.log(
-          '[DTS] ✅ Evento dts-ready recebido, inicializando controller',
-        );
         callback();
       },
       { once: true },
@@ -59,8 +51,6 @@
      * Cache dos elementos do DOM para melhor performance
      */
     cacheElements() {
-      console.log('[DTS] 🔍 Buscando elementos do DOM...');
-
       this.elements = {
         sidebar: document.getElementById('data-testid-scanner-sidebar'),
         toggleBtn: document.getElementById('dts-toggle-btn'),
@@ -83,21 +73,6 @@
         missingBody: document.getElementById('dts-missing-body'),
       };
 
-      // Logging detalhado
-      let encontrados = 0;
-      Object.entries(this.elements).forEach(([name, element]) => {
-        if (element) {
-          encontrados++;
-          console.log(`[DTS]   ✓ ${name}`);
-        } else {
-          console.log(`[DTS]   ❌ ${name} - NÃO ENCONTRADO`);
-        }
-      });
-
-      console.log(
-        `[DTS] ✅ ${encontrados}/${Object.keys(this.elements).length} elementos encontrados`,
-      );
-
       if (!this.elements.scanBtn) {
         console.error(
           '[DTS] ❌ ERRO CRÍTICO: scanBtn não encontrado! Verifique o ID #dts-scan-btn em sidebar.html',
@@ -114,15 +89,12 @@
      * Configura event listeners
      */
     setupEventListeners() {
-      console.log('[DTS] Configurando event listeners...');
-
       try {
         // Botão Escanear
         if (this.elements.scanBtn) {
           this.elements.scanBtn.addEventListener('click', () =>
             this.handleScan(),
           );
-          console.log('[DTS] ✓ Listener scan configurado');
         }
 
         // Botão Exportar
@@ -130,7 +102,6 @@
           this.elements.exportBtn.addEventListener('click', () =>
             this.handleExport(),
           );
-          console.log('[DTS] ✓ Listener export configurado');
         }
 
         // Botão Copiar
@@ -138,7 +109,6 @@
           this.elements.copyBtn.addEventListener('click', () =>
             this.handleCopy(),
           );
-          console.log('[DTS] ✓ Listener copy configurado');
         }
 
         // Botão Fechar
@@ -146,7 +116,6 @@
           this.elements.closeBtn.addEventListener('click', () =>
             this.closeSidebar(),
           );
-          console.log('[DTS] ✓ Listener close configurado');
         }
 
         // Tabs
@@ -166,7 +135,6 @@
           this.elements.themeBtn.addEventListener('click', () =>
             this.toggleTheme(),
           );
-          console.log('[DTS] ✓ Listener theme configurado');
         }
 
         // Seletor de Idioma
@@ -174,10 +142,7 @@
           this.elements.languageSelect.addEventListener('change', (e) => {
             this.setLanguage(e.target.value);
           });
-          console.log('[DTS] ✓ Listener language configurado');
         }
-
-        console.log('[DTS] ✅ Event listeners configurados com sucesso');
       } catch (error) {
         console.error('[DTS] ❌ Erro ao configurar event listeners:', error);
       }
@@ -188,7 +153,6 @@
      */
     async handleScan() {
       try {
-        console.log('[DTS] Iniciando scan...');
         this.setButtonLoading(this.elements.scanBtn, true);
 
         // 1. Extrair elementos COM data-test-id
@@ -204,10 +168,6 @@
 
         // 2. Detectar elementos interativos SEM data-test-id
         this.missingData = this.findMissingTestIds();
-
-        console.log(
-          `[DTS] Encontrados: ${this.scannedData.length} com, ${this.missingData.length} sem data-test-id`,
-        );
 
         // Renderizar tabelas
         this.renderTable();
@@ -244,11 +204,8 @@
             'dts-tab__badge--warning',
           );
         }
-
-        console.log('[DTS] ✅ Scan concluído com sucesso');
       } catch (error) {
         console.error('[DTS] ❌ Erro ao escanear:', error);
-        console.error('[DTS] Stack:', error.stack);
         this.showAlert(`${this.t('scanError')}`, 'error');
       } finally {
         this.setButtonLoading(this.elements.scanBtn, false);
@@ -362,10 +319,8 @@
           const translated = i18n.t(key);
           return translated || key;
         }
-        console.warn(`[DTS] I18N não disponível para traduzir: ${key}`);
         return key;
       } catch (e) {
-        console.error(`[DTS] Erro ao traduzir chave ${key}:`, e);
         return key;
       }
     }
@@ -408,7 +363,6 @@
 
         this.showAlert(this.t('exportSuccess'), 'success');
       } catch (error) {
-        console.error('Erro ao exportar:', error);
         this.showAlert(this.t('copyError'), 'error');
       }
     }
@@ -435,7 +389,6 @@
           this.setButtonState(this.elements.copyBtn, 'copied');
         });
       } catch (error) {
-        console.error('Erro ao copiar:', error);
         this.showAlert(this.t('copyError'), 'error');
       }
     }
@@ -707,24 +660,23 @@
       const icon = this.elements.themeBtn.querySelector('i');
       icon.className = isDark ? 'ph ph-sun' : 'ph ph-moon';
 
-      // Persistir preferência
-      chrome.storage.local.set({ dts_theme: isDark ? 'dark' : 'light' });
+      // Persistir preferência no localStorage
+      localStorage.setItem('dts_theme', isDark ? 'dark' : 'light');
     }
 
     /**
-     * Carrega tema salvo do storage
+     * Carrega tema salvo do localStorage
      */
     loadThemeFromStorage() {
-      chrome.storage.local.get(['dts_theme'], (result) => {
-        if (result.dts_theme === 'dark') {
-          this.elements.sidebar.classList.add('dts-dark');
-          if (this.elements.toggleBtn) {
-            this.elements.toggleBtn.classList.add('dts-dark');
-          }
-          const icon = this.elements.themeBtn.querySelector('i');
-          icon.className = 'ph ph-sun';
+      const savedTheme = localStorage.getItem('dts_theme');
+      if (savedTheme === 'dark') {
+        this.elements.sidebar.classList.add('dts-dark');
+        if (this.elements.toggleBtn) {
+          this.elements.toggleBtn.classList.add('dts-dark');
         }
-      });
+        const icon = this.elements.themeBtn.querySelector('i');
+        icon.className = 'ph ph-sun';
+      }
     }
 
     /**

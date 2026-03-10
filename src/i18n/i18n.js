@@ -139,7 +139,8 @@ const I18N = (() => {
 
       // Missing data-test-id
       missingTitle: 'Sin data-test-id',
-      missingDescription: 'Elementos interactivos que deberían tener data-test-id',
+      missingDescription:
+        'Elementos interactivos que deberían tener data-test-id',
       missingElement: 'Elemento',
       missingContext: 'Contexto',
       missingCount: 'elementos sin data-test-id',
@@ -192,7 +193,11 @@ const I18N = (() => {
    * @returns {string} Texto traduzido
    */
   function t(key) {
-    return translations[currentLanguage][key] || translations[DEFAULT_LANGUAGE][key] || key;
+    return (
+      translations[currentLanguage][key] ||
+      translations[DEFAULT_LANGUAGE][key] ||
+      key
+    );
   }
 
   /**
@@ -235,4 +240,3 @@ const I18N = (() => {
 // Disponibilizar globalmente
 // A inicialização (I18N.init()) será chamada pelo sidebar.js
 window.I18N = I18N;
-console.log('[DTS] ✓ I18N disponível globalmente');
