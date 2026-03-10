@@ -36,7 +36,7 @@
       this.elements = {};
       this.currentLanguage = 'pt';
       this.searchQuery = '';
-      this.sortOrder = 'asc';
+      this.sortOrder = 'none';
     }
 
     /**
@@ -160,10 +160,21 @@
         // Botão de Ordenação por Tipo
         if (this.elements.sortTypeBtn) {
           this.elements.sortTypeBtn.addEventListener('click', () => {
-            this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
+            if (this.sortOrder === 'none') {
+              this.sortOrder = 'asc';
+            } else if (this.sortOrder === 'asc') {
+              this.sortOrder = 'desc';
+            } else {
+              this.sortOrder = 'none';
+            }
             const icon = this.elements.sortTypeBtn.querySelector('i');
-            icon.className =
-              this.sortOrder === 'asc' ? 'ph ph-arrow-up' : 'ph ph-arrow-down';
+            if (this.sortOrder === 'asc') {
+              icon.className = 'ph ph-arrow-up';
+            } else if (this.sortOrder === 'desc') {
+              icon.className = 'ph ph-arrow-down';
+            } else {
+              icon.className = 'ph ph-arrows-down-up';
+            }
             this.filterAndSortData();
           });
         }
@@ -356,7 +367,12 @@
      * Exporta os dados como CSV
      */
     handleExport() {
-      if (this.scannedData.length === 0) {
+      const dataToExport =
+        this.filteredData.length > 0 || this.searchQuery
+          ? this.filteredData
+          : this.scannedData;
+
+      if (dataToExport.length === 0) {
         this.showAlert(this.t('noDataToExport'), 'error');
         return;
       }
@@ -364,7 +380,7 @@
       try {
         const csvContent = [
           ['#', 'data-test-id', this.t('elementType')],
-          ...this.scannedData.map((item, index) => [
+          ...dataToExport.map((item, index) => [
             index + 1,
             item.dataTestId,
             item.tagName,
@@ -398,13 +414,18 @@
      * Copia todos os data-test-id para o clipboard
      */
     handleCopy() {
-      if (this.scannedData.length === 0) {
+      const dataToCopy =
+        this.filteredData.length > 0 || this.searchQuery
+          ? this.filteredData
+          : this.scannedData;
+
+      if (dataToCopy.length === 0) {
         this.showAlert(this.t('noDataToCopy'), 'error');
         return;
       }
 
       try {
-        const textToCopy = this.scannedData
+        const textToCopy = dataToCopy
           .map(
             (item, index) =>
               `${index + 1}. ${item.dataTestId} (${item.tagName})`,
@@ -444,13 +465,15 @@
       }
 
       // Ordenar por tipo
-      this.filteredData.sort((a, b) => {
-        if (this.sortOrder === 'asc') {
-          return a.tagName.localeCompare(b.tagName);
-        } else {
-          return b.tagName.localeCompare(a.tagName);
-        }
-      });
+      if (this.sortOrder !== 'none') {
+        this.filteredData.sort((a, b) => {
+          if (this.sortOrder === 'asc') {
+            return a.tagName.localeCompare(b.tagName);
+          } else {
+            return b.tagName.localeCompare(a.tagName);
+          }
+        });
+      }
 
       this.renderTable();
     }
@@ -465,10 +488,17 @@
           : this.scannedData;
 
       if (dataToRender.length === 0) {
+        let message = this.t('noDataFound');
+        if (this.scannedData.length > 0 && this.searchQuery) {
+          message = this.t('noSearchResults').replace(
+            '{term}',
+            this.escapeHtml(this.elements.searchInput.value),
+          );
+        }
         this.elements.tableBody.innerHTML = `
           <tr>
-            <td colspan="3" class="dts-table__empty" data-i18n="emptyScan">
-              ${this.t('emptyScan')}
+            <td colspan="3" class="dts-table__empty">
+              ${message}
             </td>
           </tr>
         `;
@@ -697,7 +727,15 @@
     updatePageLanguage() {
       document.querySelectorAll('[data-i18n]').forEach((element) => {
         const key = element.getAttribute('data-i18n');
+        const icon = element.querySelector('i');
+        const iconStyle = icon ? icon.getAttribute('style') : null;
         element.textContent = this.t(key);
+        if (icon) {
+          element.appendChild(icon);
+          if (iconStyle) {
+            icon.setAttribute('style', iconStyle);
+          }
+        }
       });
 
       // Atualizar tabelas se houver dados

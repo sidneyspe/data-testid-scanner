@@ -29,6 +29,7 @@ const I18N = (() => {
       emptyScan: 'Clique em "Escanear" para listar todos os data-test-id',
       totalElements: 'Total de elementos encontrados',
       elementsFound: 'elemento(s) encontrado(s)',
+      noSearchResults: 'Não foram encontrados itens com o termo "{term}"',
 
       // Alerts
       scanning: 'Escaneando...',
@@ -75,6 +76,7 @@ const I18N = (() => {
       emptyScan: 'Click "Scan" to list all data-test-id',
       totalElements: 'Total elements found',
       elementsFound: 'element(s) found',
+      noSearchResults: 'No items found with term "{term}"',
 
       // Alerts
       scanning: 'Scanning...',
@@ -121,6 +123,7 @@ const I18N = (() => {
       emptyScan: 'Haga clic en "Escanear" para enumerar todos los data-test-id',
       totalElements: 'Total de elementos encontrados',
       elementsFound: 'elemento(s) encontrado(s)',
+      noSearchResults: 'No se encontraron elementos con el término "{term}"',
 
       // Alerts
       scanning: 'Escaneando...',

@@ -20,6 +20,7 @@ const translations = {
     errorScanning: 'Erro ao acessar a página. Recarregue e tente novamente.',
     errorScanningSub: 'Erro ao escanear: ',
     elementsFound: 'elemento(s) encontrado(s)',
+    noSearchResults: 'Não foram encontrados itens com o termo "{term}"',
   },
   en: {
     appTitle: 'Data-TestID Scanner',
@@ -41,6 +42,7 @@ const translations = {
     errorScanning: 'Error accessing the page. Reload and try again.',
     errorScanningSub: 'Scanning error: ',
     elementsFound: 'element(s) found',
+    noSearchResults: 'No items found with term "{term}"',
   },
   es: {
     appTitle: 'Data-TestID Scanner',
@@ -62,13 +64,14 @@ const translations = {
     errorScanning: 'Error al acceder a la página. Recargue e intente de nuevo.',
     errorScanningSub: 'Error de escaneo: ',
     elementsFound: 'elemento(s) encontrado(s)',
+    noSearchResults: 'No se encontraron elementos con el término "{term}"',
   },
 };
 
 let currentLanguage = 'pt';
 let scannedData = [];
 let filteredData = [];
-let sortOrder = 'asc';
+let sortOrder = 'none';
 let searchQuery = '';
 
 // Elementos do DOM
@@ -92,7 +95,15 @@ function t(key) {
 function updatePageLanguage() {
   document.querySelectorAll('[data-i18n]').forEach((element) => {
     const key = element.getAttribute('data-i18n');
+    const icon = element.querySelector('i');
+    const iconStyle = icon ? icon.getAttribute('style') : null;
     element.textContent = t(key);
+    if (icon) {
+      element.appendChild(icon);
+      if (iconStyle) {
+        icon.setAttribute('style', iconStyle);
+      }
+    }
   });
 
   // Atualizar tabela se houver dados
@@ -102,6 +113,32 @@ function updatePageLanguage() {
     updateEmptyTableMessage();
   }
 }
+
+// Evento de busca
+searchInput.addEventListener('input', (e) => {
+  searchQuery = e.target.value.toLowerCase();
+  filterAndSortData();
+});
+
+// Evento de ordenação por tipo
+sortTypeBtn.addEventListener('click', () => {
+  if (sortOrder === 'none') {
+    sortOrder = 'asc';
+  } else if (sortOrder === 'asc') {
+    sortOrder = 'desc';
+  } else {
+    sortOrder = 'none';
+  }
+  const icon = sortTypeBtn.querySelector('i');
+  if (sortOrder === 'asc') {
+    icon.className = 'ph ph-arrow-up inline-block ml-1 text-xs';
+  } else if (sortOrder === 'desc') {
+    icon.className = 'ph ph-arrow-down inline-block ml-1 text-xs';
+  } else {
+    icon.className = 'ph ph-arrows-down-up inline-block ml-1 text-xs';
+  }
+  filterAndSortData();
+});
 
 // Filtra e ordena os dados
 function filterAndSortData() {
@@ -115,13 +152,15 @@ function filterAndSortData() {
     );
   }
 
-  filteredData.sort((a, b) => {
-    if (sortOrder === 'asc') {
-      return a.tagName.localeCompare(b.tagName);
-    } else {
-      return b.tagName.localeCompare(a.tagName);
-    }
-  });
+  if (sortOrder !== 'none') {
+    filteredData.sort((a, b) => {
+      if (sortOrder === 'asc') {
+        return a.tagName.localeCompare(b.tagName);
+      } else {
+        return b.tagName.localeCompare(a.tagName);
+      }
+    });
+  }
 
   renderTable();
 }
@@ -132,7 +171,14 @@ function renderTable() {
     filteredData.length > 0 || searchQuery ? filteredData : scannedData;
 
   if (dataToRender.length === 0) {
-    tableBody.innerHTML = `<tr><td colspan="4" class="px-4 py-8 text-center text-gray-400">${t('noDataFound')}</td></tr>`;
+    let message = t('noDataFound');
+    if (scannedData.length > 0 && searchQuery) {
+      message = t('noSearchResults').replace(
+        '{term}',
+        escapeHtml(searchInput.value),
+      );
+    }
+    tableBody.innerHTML = `<tr><td colspan="4" class="px-4 py-8 text-center text-gray-400">${message}</td></tr>`;
     totalCount.textContent = '0';
     return;
   }
@@ -189,14 +235,17 @@ function renderTable() {
 
 // Exporta os dados como CSV
 exportBtn.addEventListener('click', () => {
-  if (scannedData.length === 0) {
+  const dataToExport =
+    filteredData.length > 0 || searchQuery ? filteredData : scannedData;
+
+  if (dataToExport.length === 0) {
     showError(t('noDataToExport'));
     return;
   }
 
   const csvContent = [
     ['#', 'data-test-id', t('elementType')],
-    ...scannedData.map((item, index) => [
+    ...dataToExport.map((item, index) => [
       index + 1,
       item.dataTestId,
       item.tagName,
@@ -222,12 +271,15 @@ exportBtn.addEventListener('click', () => {
 
 // Copia todos os data-test-id para o clipboard
 copyBtn.addEventListener('click', () => {
-  if (scannedData.length === 0) {
+  const dataToCopy =
+    filteredData.length > 0 || searchQuery ? filteredData : scannedData;
+
+  if (dataToCopy.length === 0) {
     showError(t('noDataToCopy'));
     return;
   }
 
-  const textToCopy = scannedData
+  const textToCopy = dataToCopy
     .map((item, index) => `${index + 1}. ${item.dataTestId} (${item.tagName})`)
     .join('\n');
 
