@@ -1,0 +1,34 @@
+{
+  "name": "data-testid-scanner",
+  "version": "2.0.0",
+  "description": "Chrome/Edge extension que escaneia e lista todos os data-test-id de uma página em um sidebar interativo",
+  "author": "Data-TestID Scanner Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/seu-usuario/data-testid-scanner.git"
+  },
+  "keywords": [
+    "chrome-extension",
+    "testing",
+    "data-test-id",
+    "qa",
+    "web-testing",
+    "automation"
+  ],
+  "scripts": {
+    "dev": "echo 'Para desenvolvimento, carregue a extensão em chrome://extensions/'",
+    "build": "echo 'Build automático não necessário para extensões de conteúdo estático'",
+    "lint": "eslint src/ --fix",
+    "format": "prettier --write \"src/**/*.{js,html,css}\"",
+    "test": "echo 'Abra test/test-page.html no navegador para testar'"
+  },
+  "devDependencies": {
+    "eslint": "^8.0.0",
+    "prettier": "^3.0.0"
+  },
+  "browserslist": [
+    "chrome >= 88",
+    "edge >= 88"
+  ]
+}

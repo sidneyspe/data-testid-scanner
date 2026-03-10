@@ -1,0 +1,56 @@
+{
+  "manifest_version": 3,
+  "name": "Data-TestID Scanner",
+  "version": "2.0.0",
+  "description": "Escaneia e lista todos os data-test-id de uma página em sidebar interativo",
+  "author": "Data-TestID Scanner",
+
+  "permissions": ["activeTab", "scripting", "storage"],
+
+  "action": {
+    "default_title": "Data-TestID Scanner",
+    "default_icon": {
+      "16": "assets/icons/icon-16.png",
+      "48": "assets/icons/icon-48.png",
+      "128": "assets/icons/icon-128.png"
+    }
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": [
+        "src/i18n/i18n.js",
+        "src/content/sidebar.js",
+        "src/content/sidebar-controller.js"
+      ],
+      "css": [],
+      "run_at": "document_end",
+      "all_frames": false
+    }
+  ],
+
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "src/ui/styles.css",
+        "src/ui/sidebar.html",
+        "src/i18n/i18n.js",
+        "src/content/sidebar-controller.js",
+        "src/vendor/phosphor/style.css",
+        "src/vendor/phosphor/Phosphor.woff2"
+      ],
+      "matches": ["<all_urls>"]
+    }
+  ],
+
+  "background": {
+    "service_worker": "src/background.js"
+  },
+
+  "icons": {
+    "16": "assets/icons/icon-16.png",
+    "48": "assets/icons/icon-48.png",
+    "128": "assets/icons/icon-128.png"
+  }
+}

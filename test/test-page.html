@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Página de Teste - Data-TestID Scanner</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      padding: 40px;
+    }
+
+    h1 {
+      color: #333;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    .subtitle {
+      color: #666;
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 14px;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    label {
+      color: #333;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    input,
+    select,
+    textarea {
+      padding: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: inherit;
+      transition: border-color 0.3s;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    button {
+      flex: 1;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.3s;
+    }
+
+    .btn-primary {
+      background: #667eea;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #5568d3;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-secondary {
+      background: #764ba2;
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background: #6a3f8f;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(118, 75, 162, 0.4);
+    }
+
+    .btn-success {
+      background: #48bb78;
+      color: white;
+    }
+
+    .btn-success:hover {
+      background: #38a169;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(72, 187, 120, 0.4);
+    }
+
+    .features {
+      margin-top: 30px;
+      padding-top: 30px;
+      border-top: 2px solid #f0f0f0;
+    }
+
+    .features h2 {
+      color: #333;
+      font-size: 16px;
+      margin-bottom: 15px;
+    }
+
+    .feature-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .feature-item {
+      padding: 10px;
+      background: #f5f5f5;
+      border-radius: 6px;
+      font-size: 13px;
+      color: #666;
+    }
+
+    .feature-item::before {
+      content: '✓ ';
+      color: #48bb78;
+      font-weight: bold;
+      margin-right: 5px;
+    }
+
+    .chip {
+      display: inline-block;
+      padding: 6px 12px;
+      background: #f0f0f0;
+      border-radius: 20px;
+      font-size: 12px;
+      color: #666;
+      margin-right: 8px;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 data-test-id="page-title">Formulário de Teste</h1>
+    <p class="subtitle">Use a extensão Data-TestID Scanner para encontrar todos os data-test-id</p>
+
+    <form data-test-id="login-form">
+      <!-- Campo Username -->
+      <div class="form-group">
+        <label for="username" data-test-id="username-label">Nome de Usuário</label>
+        <input
+          id="username"
+          type="text"
+          placeholder="Digite seu usuário"
+          data-test-id="username-input"
+          required
+        />
+      </div>
+
+      <!-- Campo Email -->
+      <div class="form-group">
+        <label for="email" data-test-id="email-label">Email</label>
+        <input
+          id="email"
+          type="email"
+          placeholder="seu@email.com"
+          data-test-id="email-input"
+          required
+        />
+      </div>
+
+      <!-- Campo Senha -->
+      <div class="form-group">
+        <label for="password" data-test-id="password-label">Senha</label>
+        <input
+          id="password"
+          type="password"
+          placeholder="Digite sua senha"
+          data-test-id="password-input"
+          required
+        />
+      </div>
+
+      <!-- Campo Telefone -->
+      <div class="form-group">
+        <label for="phone" data-test-id="phone-label">Telefone</label>
+        <input
+          id="phone"
+          type="tel"
+          placeholder="(11) 99999-9999"
+          data-test-id="phone-input"
+        />
+      </div>
+
+      <!-- Seletor País -->
+      <div class="form-group">
+        <label for="country" data-test-id="country-label">País</label>
+        <select id="country" data-test-id="country-select">
+          <option>Selecione um país</option>
+          <option value="br">Brasil</option>
+          <option value="us">Estados Unidos</option>
+          <option value="es">Espanha</option>
+          <option value="pt">Portugal</option>
+        </select>
+      </div>
+
+      <!-- Campo Mensagem -->
+      <div class="form-group">
+        <label for="message" data-test-id="message-label">Mensagem</label>
+        <textarea
+          id="message"
+          placeholder="Digite sua mensagem aqui..."
+          rows="4"
+          data-test-id="message-textarea"
+        ></textarea>
+      </div>
+
+      <!-- Checkbox -->
+      <div class="form-group" style="flex-direction: row; align-items: center; gap: 10px;">
+        <input
+          id="agree"
+          type="checkbox"
+          data-test-id="agree-checkbox"
+          style="width: auto; cursor: pointer;"
+        />
+        <label for="agree" style="margin: 0; cursor: pointer;" data-test-id="agree-label">
+          Concordo com os termos e condições
+        </label>
+      </div>
+
+      <!-- Botões -->
+      <div class="button-group">
+        <button
+          type="submit"
+          class="btn-primary"
+          data-test-id="submit-button"
+        >
+          Enviar
+        </button>
+        <button
+          type="reset"
+          class="btn-secondary"
+          data-test-id="reset-button"
+        >
+          Limpar
+        </button>
+        <button
+          type="button"
+          class="btn-success"
+          data-test-id="help-button"
+          onclick="alert('Precisa de ajuda? Clique no ícone da extensão!')"
+        >
+          Ajuda
+        </button>
+      </div>
+    </form>
+
+    <!-- Seção de Features -->
+    <div class="features">
+      <h2>Elementos de Teste</h2>
+      <div class="feature-list">
+        <div class="feature-item" data-test-id="feature-form">Formulário</div>
+        <div class="feature-item" data-test-id="feature-inputs">Inputs</div>
+        <div class="feature-item" data-test-id="feature-selects">Selects</div>
+        <div class="feature-item" data-test-id="feature-buttons">Buttons</div>
+        <div class="feature-item" data-test-id="feature-labels">Labels</div>
+        <div class="feature-item" data-test-id="feature-divs">Divs</div>
+      </div>
+
+      <div style="margin-top: 20px;">
+        <p data-test-id="test-paragraph" style="color: #666; font-size: 13px; margin-bottom: 10px;">
+          <strong>Testando:</strong> Esta página contém vários elementos com atributo data-test-id
+        </p>
+        <span data-test-id="test-span" class="chip">span</span>
+        <span data-test-id="info-span" class="chip">informação</span>
+        <span data-test-id="demo-span" class="chip">demonstração</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.querySelector('[data-test-id="login-form"]').addEventListener('submit', (e) => {
+      e.preventDefault();
+      alert('✅ Formulário submetido! Agora use a extensão para escanear todos os data-test-id!');
+    });
+  </script>
+</body>
+</html>

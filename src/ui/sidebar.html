@@ -1,0 +1,80 @@
+<!-- Botão flutuante para abrir/fechar o sidebar -->
+<button id="dts-toggle-btn" class="dts-toggle-btn" title="Data-TestID Scanner">
+  <i class="ph ph-code"></i>
+</button>
+
+<!-- Sidebar do Data-TestID Scanner -->
+<div id="data-testid-scanner-sidebar" class="dts-sidebar--hidden">
+  <!-- Header -->
+  <div class="dts-header">
+    <div class="dts-header__top">
+      <div>
+        <h1 class="dts-header__title" data-i18n="appTitle">Data-TestID Scanner</h1>
+        <p class="dts-header__description" data-i18n="appDescription">Escaneia todos os data-test-id da página</p>
+      </div>
+      <div class="dts-header__controls">
+        <select id="dts-language-select" class="dts-language-select">
+          <option value="pt">Português</option>
+          <option value="en">English</option>
+          <option value="es">Español</option>
+        </select>
+        <button id="dts-close-btn" class="dts-close-btn" title="Fechar">
+          <i class="ph ph-x"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Botões de Ação -->
+    <div class="dts-actions">
+      <button id="dts-scan-btn" class="dts-btn dts-btn--primary">
+        <i class="ph ph-magnifying-glass"></i>
+        <span data-i18n="scanButton">Escanear</span>
+      </button>
+      <button id="dts-export-btn" class="dts-btn dts-btn--success" disabled>
+        <i class="ph ph-download-simple"></i>
+        <span data-i18n="exportButton">Exportar CSV</span>
+      </button>
+      <button id="dts-copy-btn" class="dts-btn dts-btn--primary" disabled>
+        <i class="ph ph-copy"></i>
+        <span data-i18n="copyButton">Copiar Tudo</span>
+      </button>
+    </div>
+
+    <!-- Alert Box -->
+    <div id="dts-alert" class="dts-alert dts-alert--hidden dts-alert--info">
+      <div class="dts-alert__icon">
+        <i class="ph ph-info"></i>
+      </div>
+      <div class="dts-alert__content" id="dts-alert-message"></div>
+    </div>
+  </div>
+
+  <!-- Tabela de Resultados -->
+  <div class="dts-table-container">
+    <table class="dts-table">
+      <thead>
+        <tr>
+          <th style="width: 40px; text-align: center;">#</th>
+          <th>data-test-id</th>
+          <th data-i18n="elementType" style="width: 100px;">Tipo</th>
+          <th data-i18n="actions" style="width: 80px; text-align: center;">Ações</th>
+        </tr>
+      </thead>
+      <tbody id="dts-table-body">
+        <tr>
+          <td colspan="4" class="dts-table__empty" data-i18n="emptyScan">
+            Clique em "Escanear" para listar todos os data-test-id
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Footer -->
+  <div class="dts-footer">
+    <p>
+      <span data-i18n="totalElements">Total de elementos encontrados</span>:
+      <span class="dts-footer__count" id="dts-total-count">0</span>
+    </p>
+  </div>
+</div>
