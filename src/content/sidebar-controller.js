@@ -677,14 +677,17 @@
      */
     loadThemeFromStorage() {
       const savedTheme = localStorage.getItem('dts_theme');
-      if (savedTheme === 'dark') {
+      const isDark = savedTheme === 'dark';
+
+      if (isDark) {
         this.elements.sidebar.classList.add('dts-dark');
         if (this.elements.toggleBtn) {
           this.elements.toggleBtn.classList.add('dts-dark');
         }
-        const icon = this.elements.themeBtn.querySelector('i');
-        icon.className = 'ph ph-sun';
       }
+
+      const icon = this.elements.themeBtn.querySelector('i');
+      icon.className = isDark ? 'ph ph-sun' : 'ph ph-moon';
     }
 
     /**

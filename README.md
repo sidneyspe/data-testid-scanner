@@ -138,20 +138,17 @@ To test changes, reload the extension in `chrome://extensions/` after modifying 
 
 ## Building for Distribution
 
-Create the release artifact (CRX):
+Create the release artifact (ZIP):
 
 ```bash
-npm run package:crx
+npm run build
 ```
 
-This creates:
+This creates `data-test-id-scanner.zip` ready for:
 
-- `data-test-id-scanner-vX.X.X.crx` — **Release artifact** ready for distribution
-- `data-test-id-scanner.pem` — Private key (⚠️ keep safe! needed for updates)
-
-> ⚠️ **Security**: The `.pem` file is in `.gitignore` and will never be committed. Store it securely for future updates.
-
-The `.crx` file can be uploaded to GitHub Releases or shared directly.
+- GitHub Releases
+- Chrome Web Store / Edge Add-ons submission
+- Direct distribution
 
 ## Browser Support
 

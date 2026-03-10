@@ -18,15 +18,13 @@
   ],
   "scripts": {
     "dev": "echo 'Para desenvolvimento, carregue a extensão em chrome://extensions/'",
-    "build": "npm run package:crx",
+    "build": "python3 -m zipfile -c data-test-id-scanner.zip manifest.json assets/ src/ test/ README.md",
     "lint": "eslint src/ --fix",
     "format": "prettier --write \"src/**/*.{js,html,css}\"",
-    "test": "echo 'Abra test/test-page.html no navegador para testar'",
-    "package:crx": "node scripts/build-crx.js"
+    "test": "echo 'Abra test/test-page.html no navegador para testar'"
   },
   "devDependencies": {
     "adm-zip": "^0.5.16",
-    "chrome-extension-cli": "^1.5.0",
     "eslint": "^8.0.0",
     "prettier": "^3.0.0"
   },

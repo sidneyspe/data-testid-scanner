@@ -14,9 +14,6 @@ yarn.lock
 *.swp
 *.swo
 
-# Chave privada da extensão
-*.pem
-
 # Logs
 *.log
 npm-debug.log*
