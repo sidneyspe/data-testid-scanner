@@ -13,16 +13,24 @@
   function waitForDependencies(callback) {
     const sidebar = document.getElementById('data-testid-scanner-sidebar');
     if (sidebar) {
-      console.log('[DTS] ✅ Sidebar já disponível no DOM, inicializando controller');
+      console.log(
+        '[DTS] ✅ Sidebar já disponível no DOM, inicializando controller',
+      );
       callback();
       return;
     }
 
     // O sidebar.js emite 'dts-ready' quando termina de injetar o HTML
-    window.addEventListener('dts-ready', () => {
-      console.log('[DTS] ✅ Evento dts-ready recebido, inicializando controller');
-      callback();
-    }, { once: true });
+    window.addEventListener(
+      'dts-ready',
+      () => {
+        console.log(
+          '[DTS] ✅ Evento dts-ready recebido, inicializando controller',
+        );
+        callback();
+      },
+      { once: true },
+    );
   }
 
   /**
@@ -86,13 +94,19 @@
         }
       });
 
-      console.log(`[DTS] ✅ ${encontrados}/${Object.keys(this.elements).length} elementos encontrados`);
+      console.log(
+        `[DTS] ✅ ${encontrados}/${Object.keys(this.elements).length} elementos encontrados`,
+      );
 
       if (!this.elements.scanBtn) {
-        console.error('[DTS] ❌ ERRO CRÍTICO: scanBtn não encontrado! Verifique o ID #dts-scan-btn em sidebar.html');
+        console.error(
+          '[DTS] ❌ ERRO CRÍTICO: scanBtn não encontrado! Verifique o ID #dts-scan-btn em sidebar.html',
+        );
       }
       if (!this.elements.languageSelect) {
-        console.error('[DTS] ❌ ERRO CRÍTICO: languageSelect não encontrado! Verifique o ID #dts-language-select em sidebar.html');
+        console.error(
+          '[DTS] ❌ ERRO CRÍTICO: languageSelect não encontrado! Verifique o ID #dts-language-select em sidebar.html',
+        );
       }
     }
 
@@ -105,39 +119,53 @@
       try {
         // Botão Escanear
         if (this.elements.scanBtn) {
-          this.elements.scanBtn.addEventListener('click', () => this.handleScan());
+          this.elements.scanBtn.addEventListener('click', () =>
+            this.handleScan(),
+          );
           console.log('[DTS] ✓ Listener scan configurado');
         }
 
         // Botão Exportar
         if (this.elements.exportBtn) {
-          this.elements.exportBtn.addEventListener('click', () => this.handleExport());
+          this.elements.exportBtn.addEventListener('click', () =>
+            this.handleExport(),
+          );
           console.log('[DTS] ✓ Listener export configurado');
         }
 
         // Botão Copiar
         if (this.elements.copyBtn) {
-          this.elements.copyBtn.addEventListener('click', () => this.handleCopy());
+          this.elements.copyBtn.addEventListener('click', () =>
+            this.handleCopy(),
+          );
           console.log('[DTS] ✓ Listener copy configurado');
         }
 
         // Botão Fechar
         if (this.elements.closeBtn) {
-          this.elements.closeBtn.addEventListener('click', () => this.closeSidebar());
+          this.elements.closeBtn.addEventListener('click', () =>
+            this.closeSidebar(),
+          );
           console.log('[DTS] ✓ Listener close configurado');
         }
 
         // Tabs
         if (this.elements.tabFound) {
-          this.elements.tabFound.addEventListener('click', () => this.switchTab('found'));
+          this.elements.tabFound.addEventListener('click', () =>
+            this.switchTab('found'),
+          );
         }
         if (this.elements.tabMissing) {
-          this.elements.tabMissing.addEventListener('click', () => this.switchTab('missing'));
+          this.elements.tabMissing.addEventListener('click', () =>
+            this.switchTab('missing'),
+          );
         }
 
         // Botão Tema
         if (this.elements.themeBtn) {
-          this.elements.themeBtn.addEventListener('click', () => this.toggleTheme());
+          this.elements.themeBtn.addEventListener('click', () =>
+            this.toggleTheme(),
+          );
           console.log('[DTS] ✓ Listener theme configurado');
         }
 
@@ -177,7 +205,9 @@
         // 2. Detectar elementos interativos SEM data-test-id
         this.missingData = this.findMissingTestIds();
 
-        console.log(`[DTS] Encontrados: ${this.scannedData.length} com, ${this.missingData.length} sem data-test-id`);
+        console.log(
+          `[DTS] Encontrados: ${this.scannedData.length} com, ${this.missingData.length} sem data-test-id`,
+        );
 
         // Renderizar tabelas
         this.renderTable();
@@ -189,12 +219,18 @@
         this.elements.totalCount.textContent = this.scannedData.length;
 
         // Mostrar mensagem
-        const message = this.scannedData.length > 0
-          ? `${this.scannedData.length} ${this.t('elementsFound')}` +
-            (this.missingData.length > 0 ? ` | ${this.missingData.length} ${this.t('missingCount')}` : '')
-          : this.t('noDataFound');
+        const message =
+          this.scannedData.length > 0
+            ? `${this.scannedData.length} ${this.t('elementsFound')}` +
+              (this.missingData.length > 0
+                ? ` | ${this.missingData.length} ${this.t('missingCount')}`
+                : '')
+            : this.t('noDataFound');
 
-        this.showAlert(message, this.scannedData.length > 0 ? 'success' : 'info');
+        this.showAlert(
+          message,
+          this.scannedData.length > 0 ? 'success' : 'info',
+        );
 
         // Habilitar botões de exportação e cópia
         this.elements.exportBtn.disabled = this.scannedData.length === 0;
@@ -204,7 +240,9 @@
         if (this.missingData.length > 0) {
           this.elements.missingCount.classList.add('dts-tab__badge--warning');
         } else {
-          this.elements.missingCount.classList.remove('dts-tab__badge--warning');
+          this.elements.missingCount.classList.remove(
+            'dts-tab__badge--warning',
+          );
         }
 
         console.log('[DTS] ✅ Scan concluído com sucesso');
@@ -252,7 +290,12 @@
         // Ignorar elementos da própria extensão
         if (el.closest(`#${sidebarId}`) || el.id === toggleId) return;
         // Ignorar elementos ocultos
-        if (el.offsetParent === null && el.tagName !== 'INPUT' && el.getAttribute('type') !== 'hidden') return;
+        if (
+          el.offsetParent === null &&
+          el.tagName !== 'INPUT' &&
+          el.getAttribute('type') !== 'hidden'
+        )
+          return;
         // Ignorar se já tem data-test-id
         if (el.hasAttribute('data-test-id')) return;
 
@@ -348,7 +391,9 @@
           .map((row) => row.map((cell) => `"${cell}"`).join(','))
           .join('\n');
 
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const blob = new Blob([csvContent], {
+          type: 'text/csv;charset=utf-8;',
+        });
         const link = document.createElement('a');
         const url = URL.createObjectURL(blob);
 
@@ -381,7 +426,7 @@
         const textToCopy = this.scannedData
           .map(
             (item, index) =>
-              `${index + 1}. ${item.dataTestId} (${item.tagName})`
+              `${index + 1}. ${item.dataTestId} (${item.tagName})`,
           )
           .join('\n');
 
@@ -402,7 +447,7 @@
       if (this.scannedData.length === 0) {
         this.elements.tableBody.innerHTML = `
           <tr>
-            <td colspan="4" class="dts-table__empty" data-i18n="emptyScan">
+            <td colspan="3" class="dts-table__empty" data-i18n="emptyScan">
               ${this.t('emptyScan')}
             </td>
           </tr>
@@ -417,37 +462,29 @@
             <tr>
               <td class="dts-table__index">${index + 1}</td>
               <td class="dts-table__id">
-                <code class="dts-table__id-code">${this.escapeHtml(
-                  item.dataTestId
+                <code class="dts-table__id-code dts-table__clickable" data-index="${index}">${this.escapeHtml(
+                  item.dataTestId,
                 )}</code>
               </td>
               <td>
                 <span class="dts-table__tag">${this.escapeHtml(
-                  item.tagName
+                  item.tagName,
                 )}</span>
               </td>
-              <td class="dts-table__actions">
-                <button class="dts-table__copy-btn" data-index="${index}" title="${this.t(
-                  'copy'
-                )}">
-                  <i class="ph ph-copy"></i>
-                  ${this.t('copy')}
-                </button>
-              </td>
             </tr>
-          `
+          `,
         )
         .join('');
 
       this.elements.totalCount.textContent = this.scannedData.length;
 
-      // Adicionar event listeners para botões de copiar individual
-      document.querySelectorAll('.dts-table__copy-btn').forEach((btn) => {
-        btn.addEventListener('click', (e) => {
+      // Adicionar event listeners para clique no data-test-id copiar para clipboard
+      document.querySelectorAll('.dts-table__clickable').forEach((code) => {
+        code.addEventListener('click', (e) => {
           const index = parseInt(e.currentTarget.dataset.index);
           this.copyItemToClipboard(
             this.scannedData[index].dataTestId,
-            e.currentTarget
+            e.currentTarget,
           );
         });
       });
@@ -481,7 +518,7 @@
               </td>
               <td class="dts-table__context">${this.escapeHtml(item.context)}</td>
             </tr>
-          `
+          `,
         )
         .join('');
 
@@ -506,22 +543,41 @@
      */
     switchTab(tab) {
       // Atualizar estado das tabs
-      this.elements.tabFound.classList.toggle('dts-tab--active', tab === 'found');
-      this.elements.tabMissing.classList.toggle('dts-tab--active', tab === 'missing');
+      this.elements.tabFound.classList.toggle(
+        'dts-tab--active',
+        tab === 'found',
+      );
+      this.elements.tabMissing.classList.toggle(
+        'dts-tab--active',
+        tab === 'missing',
+      );
 
       // Atualizar painéis visíveis
-      this.elements.panelFound.classList.toggle('dts-panel--active', tab === 'found');
-      this.elements.panelMissing.classList.toggle('dts-panel--active', tab === 'missing');
+      this.elements.panelFound.classList.toggle(
+        'dts-panel--active',
+        tab === 'found',
+      );
+      this.elements.panelMissing.classList.toggle(
+        'dts-panel--active',
+        tab === 'missing',
+      );
     }
 
     /**
      * Copia um item específico para o clipboard
      */
-    copyItemToClipboard(text, button) {
+    copyItemToClipboard(text, element) {
       navigator.clipboard.writeText(text).then(() => {
-        this.setButtonState(button, 'copied');
+        const originalText = element.textContent;
+
+        element.textContent = this.t('copied');
+        element.style.backgroundColor = 'var(--color-success)';
+        element.style.color = 'white';
+
         setTimeout(() => {
-          this.setButtonState(button, 'normal');
+          element.textContent = originalText;
+          element.style.backgroundColor = '';
+          element.style.color = '';
         }, 2000);
       });
     }
@@ -588,7 +644,7 @@
         const icon = button.querySelector('i');
         icon.className = 'ph ph-copy';
         const textNode = Array.from(button.childNodes).find(
-          (node) => node.nodeType === Node.TEXT_NODE
+          (node) => node.nodeType === Node.TEXT_NODE,
         );
         if (textNode) textNode.textContent = this.t('copy');
       }
