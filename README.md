@@ -41,6 +41,16 @@ Browser extension for Chrome and Edge that scans and lists all `data-test-id` at
 5. Change language via the dropdown in the header
 6. Close the sidebar with the **X** button or by clicking the floating button again
 
+## Screenshots
+
+### Light mode
+
+![Sidebar light mode](assets/images/img-1.png)
+
+### Dark mode
+
+![Sidebar dark mode](assets/images/img-2.png)
+
 ## Project Structure
 
 ```
