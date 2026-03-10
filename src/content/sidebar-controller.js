@@ -384,9 +384,17 @@
           )
           .join('\n');
 
+        const button = this.elements.copyBtn;
+        const span = button.querySelector('span');
+        const originalText = span.textContent;
+
         navigator.clipboard.writeText(textToCopy).then(() => {
           this.showAlert(this.t('copySuccess'), 'success');
-          this.setButtonState(this.elements.copyBtn, 'copied');
+          span.textContent = this.t('copied');
+
+          setTimeout(() => {
+            span.textContent = originalText;
+          }, 1000);
         });
       } catch (error) {
         this.showAlert(this.t('copyError'), 'error');
