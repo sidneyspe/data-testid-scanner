@@ -1,7 +1,9 @@
 /* ====================================
    VARIÁVEIS CSS - Sistema de Design
+   Escopadas para não afetar a página host
    ==================================== */
-:root {
+#data-testid-scanner-sidebar,
+.dts-toggle-btn {
   /* Cores */
   --color-primary: #667eea;
   --color-primary-dark: #5568d3;
@@ -23,6 +25,21 @@
   --color-text-tertiary: #718096;
   --color-border: #cbd5e0;
   --color-border-light: #e2e8f0;
+
+  /* Alert */
+  --color-alert-info-bg: #eff6ff;
+  --color-alert-info-border: #bfdbfe;
+  --color-alert-info-text: #1e40af;
+  --color-alert-success-bg: #f0fdf4;
+  --color-alert-success-border: #bbf7d0;
+  --color-alert-success-text: #166534;
+  --color-alert-error-bg: #fef2f2;
+  --color-alert-error-border: #fecaca;
+  --color-alert-error-text: #991b1b;
+
+  /* Tag */
+  --color-tag-bg: #f3e8ff;
+  --color-tag-text: #6b21a8;
 
   /* Espaçamento */
   --spacing-xs: 4px;
@@ -68,21 +85,56 @@
 }
 
 /* ====================================
-   RESET E ESTILOS BASE
+   DARK MODE
    ==================================== */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+#data-testid-scanner-sidebar.dts-dark,
+.dts-toggle-btn.dts-dark {
+  --color-primary: #818cf8;
+  --color-primary-dark: #6366f1;
+  --color-success: #4ade80;
+  --color-success-dark: #22c55e;
+  --color-danger: #f87171;
+  --color-danger-dark: #ef4444;
+  --color-warning: #fb923c;
+  --color-warning-dark: #f97316;
+  --color-info: #60a5fa;
+  --color-info-dark: #3b82f6;
+
+  --color-bg-primary: #1a1a2e;
+  --color-bg-secondary: #16213e;
+  --color-bg-tertiary: #0f3460;
+  --color-text-primary: #e2e8f0;
+  --color-text-secondary: #a0aec0;
+  --color-text-tertiary: #718096;
+  --color-border: #2d3748;
+  --color-border-light: #2d3748;
+
+  --color-alert-info-bg: #1e2a4a;
+  --color-alert-info-border: #2d4a7a;
+  --color-alert-info-text: #93c5fd;
+  --color-alert-success-bg: #14332a;
+  --color-alert-success-border: #1a5c3a;
+  --color-alert-success-text: #86efac;
+  --color-alert-error-bg: #3b1a1a;
+  --color-alert-error-border: #6b2a2a;
+  --color-alert-error-text: #fca5a5;
+
+  --color-tag-bg: #2e1a4a;
+  --color-tag-text: #c4b5fd;
+
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
 }
 
-html,
-body {
-  font-family: var(--font-family);
-  font-size: var(--font-size-base);
-  line-height: var(--line-height-normal);
-  color: var(--color-text-primary);
-  background-color: var(--color-bg-primary);
+/* ====================================
+   RESET ESCOPADO - Apenas elementos DTS
+   ==================================== */
+#data-testid-scanner-sidebar *,
+#data-testid-scanner-sidebar *::before,
+#data-testid-scanner-sidebar *::after {
+  box-sizing: border-box;
 }
 
 /* ====================================
@@ -95,12 +147,15 @@ body {
   width: 420px;
   height: 100vh;
   background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
   border-left: 1px solid var(--color-border-light);
   box-shadow: var(--shadow-xl);
   z-index: var(--z-sidebar);
   display: flex;
   flex-direction: column;
   font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-normal);
   overflow: hidden;
   animation: slideIn var(--transition-slow) ease-out;
 }
@@ -231,6 +286,7 @@ body {
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
+.dts-theme-btn,
 .dts-close-btn {
   background: none;
   border: none;
@@ -244,6 +300,7 @@ body {
   justify-content: center;
 }
 
+.dts-theme-btn:hover,
 .dts-close-btn:hover {
   color: var(--color-text-primary);
 }
@@ -374,9 +431,9 @@ body {
 
 /* Info */
 .dts-alert--info {
-  background-color: #eff6ff;
-  border: 1px solid #bfdbfe;
-  color: #1e40af;
+  background-color: var(--color-alert-info-bg);
+  border: 1px solid var(--color-alert-info-border);
+  color: var(--color-alert-info-text);
 }
 
 .dts-alert--info .dts-alert__icon {
@@ -385,9 +442,9 @@ body {
 
 /* Success */
 .dts-alert--success {
-  background-color: #f0fdf4;
-  border: 1px solid #bbf7d0;
-  color: #166534;
+  background-color: var(--color-alert-success-bg);
+  border: 1px solid var(--color-alert-success-border);
+  color: var(--color-alert-success-text);
 }
 
 .dts-alert--success .dts-alert__icon {
@@ -396,9 +453,9 @@ body {
 
 /* Error */
 .dts-alert--error {
-  background-color: #fef2f2;
-  border: 1px solid #fecaca;
-  color: #991b1b;
+  background-color: var(--color-alert-error-bg);
+  border: 1px solid var(--color-alert-error-border);
+  color: var(--color-alert-error-text);
 }
 
 .dts-alert--error .dts-alert__icon {
@@ -490,8 +547,8 @@ body {
 }
 
 .dts-table__tag {
-  background-color: #f3e8ff;
-  color: #6b21a8;
+  background-color: var(--color-tag-bg);
+  color: var(--color-tag-text);
   padding: var(--spacing-xs) var(--spacing-sm);
   border-radius: var(--radius-xl);
   font-size: var(--font-size-xs);

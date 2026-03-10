@@ -43,6 +43,7 @@
       this.setupEventListeners();
       this.updatePageLanguage();
       this.setLanguageFromStorage();
+      this.loadThemeFromStorage();
     }
 
     /**
@@ -53,10 +54,12 @@
 
       this.elements = {
         sidebar: document.getElementById('data-testid-scanner-sidebar'),
+        toggleBtn: document.getElementById('dts-toggle-btn'),
         scanBtn: document.getElementById('dts-scan-btn'),
         exportBtn: document.getElementById('dts-export-btn'),
         copyBtn: document.getElementById('dts-copy-btn'),
         closeBtn: document.getElementById('dts-close-btn'),
+        themeBtn: document.getElementById('dts-theme-btn'),
         languageSelect: document.getElementById('dts-language-select'),
         tableBody: document.getElementById('dts-table-body'),
         totalCount: document.getElementById('dts-total-count'),
@@ -114,6 +117,12 @@
         if (this.elements.closeBtn) {
           this.elements.closeBtn.addEventListener('click', () => this.closeSidebar());
           console.log('[DTS] ✓ Listener close configurado');
+        }
+
+        // Botão Tema
+        if (this.elements.themeBtn) {
+          this.elements.themeBtn.addEventListener('click', () => this.toggleTheme());
+          console.log('[DTS] ✓ Listener theme configurado');
         }
 
         // Seletor de Idioma
@@ -437,6 +446,41 @@
       if (this.scannedData.length > 0) {
         this.renderTable();
       }
+    }
+
+    /**
+     * Alterna entre tema light e dark
+     */
+    toggleTheme() {
+      const isDark = this.elements.sidebar.classList.toggle('dts-dark');
+
+      // Aplicar no toggle button também
+      if (this.elements.toggleBtn) {
+        this.elements.toggleBtn.classList.toggle('dts-dark', isDark);
+      }
+
+      // Atualizar ícone do botão
+      const icon = this.elements.themeBtn.querySelector('i');
+      icon.className = isDark ? 'ph ph-sun' : 'ph ph-moon';
+
+      // Persistir preferência
+      chrome.storage.local.set({ dts_theme: isDark ? 'dark' : 'light' });
+    }
+
+    /**
+     * Carrega tema salvo do storage
+     */
+    loadThemeFromStorage() {
+      chrome.storage.local.get(['dts_theme'], (result) => {
+        if (result.dts_theme === 'dark') {
+          this.elements.sidebar.classList.add('dts-dark');
+          if (this.elements.toggleBtn) {
+            this.elements.toggleBtn.classList.add('dts-dark');
+          }
+          const icon = this.elements.themeBtn.querySelector('i');
+          icon.className = 'ph ph-sun';
+        }
+      });
     }
 
     /**
