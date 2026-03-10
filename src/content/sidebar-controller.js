@@ -31,9 +31,12 @@
   class SidebarController {
     constructor() {
       this.scannedData = [];
+      this.filteredData = [];
       this.missingData = [];
       this.elements = {};
       this.currentLanguage = 'pt';
+      this.searchQuery = '';
+      this.sortOrder = 'asc';
     }
 
     /**
@@ -71,6 +74,8 @@
         foundCount: document.getElementById('dts-found-count'),
         missingCount: document.getElementById('dts-missing-count'),
         missingBody: document.getElementById('dts-missing-body'),
+        searchInput: document.getElementById('dts-search-input'),
+        sortTypeBtn: document.getElementById('dts-sort-type'),
       };
 
       if (!this.elements.scanBtn) {
@@ -143,6 +148,25 @@
             this.setLanguage(e.target.value);
           });
         }
+
+        // Campo de Busca
+        if (this.elements.searchInput) {
+          this.elements.searchInput.addEventListener('input', (e) => {
+            this.searchQuery = e.target.value.toLowerCase();
+            this.filterAndSortData();
+          });
+        }
+
+        // Botão de Ordenação por Tipo
+        if (this.elements.sortTypeBtn) {
+          this.elements.sortTypeBtn.addEventListener('click', () => {
+            this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
+            const icon = this.elements.sortTypeBtn.querySelector('i');
+            icon.className =
+              this.sortOrder === 'asc' ? 'ph ph-arrow-up' : 'ph ph-arrow-down';
+            this.filterAndSortData();
+          });
+        }
       } catch (error) {
         console.error('[DTS] ❌ Erro ao configurar event listeners:', error);
       }
@@ -169,8 +193,11 @@
         // 2. Detectar elementos interativos SEM data-test-id
         this.missingData = this.findMissingTestIds();
 
+        // Inicializar filteredData
+        this.filteredData = [...this.scannedData];
+
         // Renderizar tabelas
-        this.renderTable();
+        this.filterAndSortData();
         this.renderMissingTable();
 
         // Atualizar badges das tabs
@@ -402,10 +429,42 @@
     }
 
     /**
+     * Filtra e ordena os dados
+     */
+    filterAndSortData() {
+      this.filteredData = [...this.scannedData];
+
+      // Filtrar por data-test-id ou tipo
+      if (this.searchQuery) {
+        this.filteredData = this.filteredData.filter(
+          (item) =>
+            item.dataTestId.toLowerCase().includes(this.searchQuery) ||
+            item.tagName.toLowerCase().includes(this.searchQuery),
+        );
+      }
+
+      // Ordenar por tipo
+      this.filteredData.sort((a, b) => {
+        if (this.sortOrder === 'asc') {
+          return a.tagName.localeCompare(b.tagName);
+        } else {
+          return b.tagName.localeCompare(a.tagName);
+        }
+      });
+
+      this.renderTable();
+    }
+
+    /**
      * Renderiza a tabela com os dados
      */
     renderTable() {
-      if (this.scannedData.length === 0) {
+      const dataToRender =
+        this.filteredData.length > 0 || this.searchQuery
+          ? this.filteredData
+          : this.scannedData;
+
+      if (dataToRender.length === 0) {
         this.elements.tableBody.innerHTML = `
           <tr>
             <td colspan="3" class="dts-table__empty" data-i18n="emptyScan">
@@ -417,13 +476,13 @@
         return;
       }
 
-      this.elements.tableBody.innerHTML = this.scannedData
+      this.elements.tableBody.innerHTML = dataToRender
         .map(
           (item, index) => `
             <tr>
               <td class="dts-table__index">${index + 1}</td>
               <td class="dts-table__id">
-                <code class="dts-table__id-code dts-table__clickable" data-index="${index}">${this.escapeHtml(
+                <code class="dts-table__id-code dts-table__clickable" data-data-testid="${this.escapeHtml(item.dataTestId)}">${this.escapeHtml(
                   item.dataTestId,
                 )}</code>
               </td>
@@ -437,16 +496,13 @@
         )
         .join('');
 
-      this.elements.totalCount.textContent = this.scannedData.length;
+      this.elements.totalCount.textContent = dataToRender.length;
 
       // Adicionar event listeners para clique no data-test-id copiar para clipboard
       document.querySelectorAll('.dts-table__clickable').forEach((code) => {
         code.addEventListener('click', (e) => {
-          const index = parseInt(e.currentTarget.dataset.index);
-          this.copyItemToClipboard(
-            this.scannedData[index].dataTestId,
-            e.currentTarget,
-          );
+          const dataTestId = e.currentTarget.dataset.dataTestid;
+          this.copyItemToClipboard(dataTestId, e.currentTarget);
         });
       });
     }

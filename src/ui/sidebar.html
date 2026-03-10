@@ -81,6 +81,19 @@
 
   <!-- Painel: Encontrados -->
   <div id="dts-panel-found" class="dts-panel dts-panel--active">
+    <!-- Campo de Busca -->
+    <div class="dts-search-container">
+      <div class="dts-search">
+        <i class="ph ph-magnifying-glass"></i>
+        <input
+          type="text"
+          id="dts-search-input"
+          placeholder="Filtrar por data-test-id ou tipo..."
+          class="dts-search-input"
+        />
+      </div>
+    </div>
+
     <div class="dts-table-container">
       <table class="dts-table">
         <thead>
@@ -94,7 +107,17 @@
                 title="Clique no item para copiar para a área de transferência"
               ></i>
             </th>
-            <th data-i18n="elementType" style="width: 80px">Tipo</th>
+            <th
+              data-i18n="elementType"
+              style="width: 80px; cursor: pointer"
+              id="dts-sort-type"
+            >
+              Tipo
+              <i
+                class="ph ph-arrows-down-up"
+                style="font-size: 12px; margin-left: 4px"
+              ></i>
+            </th>
           </tr>
         </thead>
         <tbody id="dts-table-body">

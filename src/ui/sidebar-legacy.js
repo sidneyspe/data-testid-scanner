@@ -19,7 +19,7 @@ const translations = {
     noDataFound: 'Nenhum data-test-id encontrado',
     errorScanning: 'Erro ao acessar a página. Recarregue e tente novamente.',
     errorScanningSub: 'Erro ao escanear: ',
-    elementsFound: 'elemento(s) encontrado(s)'
+    elementsFound: 'elemento(s) encontrado(s)',
   },
   en: {
     appTitle: 'Data-TestID Scanner',
@@ -40,7 +40,7 @@ const translations = {
     noDataFound: 'No data-test-id found',
     errorScanning: 'Error accessing the page. Reload and try again.',
     errorScanningSub: 'Scanning error: ',
-    elementsFound: 'element(s) found'
+    elementsFound: 'element(s) found',
   },
   es: {
     appTitle: 'Data-TestID Scanner',
@@ -61,12 +61,15 @@ const translations = {
     noDataFound: 'No se encontró data-test-id',
     errorScanning: 'Error al acceder a la página. Recargue e intente de nuevo.',
     errorScanningSub: 'Error de escaneo: ',
-    elementsFound: 'elemento(s) encontrado(s)'
-  }
+    elementsFound: 'elemento(s) encontrado(s)',
+  },
 };
 
 let currentLanguage = 'pt';
 let scannedData = [];
+let filteredData = [];
+let sortOrder = 'asc';
+let searchQuery = '';
 
 // Elementos do DOM
 const scanBtn = document.getElementById('scanBtn');
@@ -77,6 +80,8 @@ const totalCount = document.getElementById('totalCount');
 const infoBox = document.getElementById('infoBox');
 const infoText = document.getElementById('infoText');
 const languageSelect = document.getElementById('languageSelect');
+const searchInput = document.getElementById('searchInput');
+const sortTypeBtn = document.getElementById('sortTypeBtn');
 
 // Função de tradução
 function t(key) {
@@ -85,7 +90,7 @@ function t(key) {
 
 // Atualiza todos os textos da página
 function updatePageLanguage() {
-  document.querySelectorAll('[data-i18n]').forEach(element => {
+  document.querySelectorAll('[data-i18n]').forEach((element) => {
     const key = element.getAttribute('data-i18n');
     element.textContent = t(key);
   });
@@ -98,84 +103,43 @@ function updatePageLanguage() {
   }
 }
 
-// Atualiza mensagem vazia da tabela
-function updateEmptyTableMessage() {
-  const emptyRow = tableBody.querySelector('tr');
-  if (emptyRow && emptyRow.children.length === 1) {
-    const td = emptyRow.querySelector('td');
-    if (scannedData.length === 0) {
-      td.textContent = t('emptyScan');
-    } else {
-      td.textContent = t('noDataFound');
-    }
-  }
-}
+// Filtra e ordena os dados
+function filterAndSortData() {
+  filteredData = [...scannedData];
 
-// Evento de mudança de idioma
-languageSelect.addEventListener('change', (e) => {
-  currentLanguage = e.target.value;
-  chrome.storage.local.set({ preferredLanguage: currentLanguage });
-  updatePageLanguage();
-});
-
-// Carrega idioma salvo
-chrome.storage.local.get(['preferredLanguage'], (result) => {
-  if (result.preferredLanguage) {
-    currentLanguage = result.preferredLanguage;
-    languageSelect.value = currentLanguage;
-  }
-  updatePageLanguage();
-});
-
-// Evento do botão Escanear
-scanBtn.addEventListener('click', async () => {
-  scanBtn.disabled = true;
-  const originalHtml = scanBtn.innerHTML;
-  scanBtn.innerHTML = '<i class="ph ph-spinning-loader animate-spin"></i> <span>' + t('scanning') + '</span>';
-
-  try {
-    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-
-    chrome.tabs.sendMessage(
-      tab.id,
-      { action: 'getDataTestIds' },
-      (response) => {
-        if (chrome.runtime.lastError) {
-          showError(t('errorScanning'));
-          scanBtn.disabled = false;
-          scanBtn.innerHTML = originalHtml;
-          return;
-        }
-
-        if (response && response.success) {
-          scannedData = response.data;
-          renderTable();
-          showInfo(`${scannedData.length} ${t('elementsFound')}`);
-          exportBtn.disabled = false;
-          copyBtn.disabled = false;
-        }
-
-        scanBtn.disabled = false;
-        scanBtn.innerHTML = originalHtml;
-      }
+  if (searchQuery) {
+    filteredData = filteredData.filter(
+      (item) =>
+        item.dataTestId.toLowerCase().includes(searchQuery) ||
+        item.tagName.toLowerCase().includes(searchQuery),
     );
-  } catch (error) {
-    showError(t('errorScanningSub') + error.message);
-    scanBtn.disabled = false;
-    scanBtn.innerHTML = originalHtml;
   }
-});
+
+  filteredData.sort((a, b) => {
+    if (sortOrder === 'asc') {
+      return a.tagName.localeCompare(b.tagName);
+    } else {
+      return b.tagName.localeCompare(a.tagName);
+    }
+  });
+
+  renderTable();
+}
 
 // Renderiza a tabela com os dados
 function renderTable() {
-  if (scannedData.length === 0) {
+  const dataToRender =
+    filteredData.length > 0 || searchQuery ? filteredData : scannedData;
+
+  if (dataToRender.length === 0) {
     tableBody.innerHTML = `<tr><td colspan="4" class="px-4 py-8 text-center text-gray-400">${t('noDataFound')}</td></tr>`;
     totalCount.textContent = '0';
     return;
   }
 
-  tableBody.innerHTML = scannedData
-    .map((item, index) => `
+  tableBody.innerHTML = dataToRender
+    .map(
+      (item, index) => `
       <tr class="border-b border-gray-100 hover:bg-blue-50 transition">
         <td class="px-4 py-3 text-gray-500 font-mono text-xs">${index + 1}</td>
         <td class="px-4 py-3">
@@ -191,7 +155,7 @@ function renderTable() {
         <td class="px-4 py-3 text-center">
           <button
             class="copy-item-btn text-blue-600 hover:text-blue-800 font-semibold text-xs flex items-center justify-center gap-1 mx-auto"
-            data-index="${index}"
+            data-data-testid="${escapeHtml(item.dataTestId)}"
             title="${t('copy')}"
           >
             <i class="ph ph-copy text-sm"></i>
@@ -199,16 +163,17 @@ function renderTable() {
           </button>
         </td>
       </tr>
-    `)
+    `,
+    )
     .join('');
 
-  totalCount.textContent = scannedData.length;
+  totalCount.textContent = dataToRender.length;
 
   // Adiciona event listeners para os botões de copiar individual
   document.querySelectorAll('.copy-item-btn').forEach((btn) => {
     btn.addEventListener('click', (e) => {
-      const index = parseInt(e.target.closest('.copy-item-btn').dataset.index);
-      copyToClipboard(scannedData[index].dataTestId);
+      const dataTestId = e.target.closest('.copy-item-btn').dataset.dataTestid;
+      copyToClipboard(dataTestId);
       const oldHtml = btn.innerHTML;
       btn.innerHTML = `<i class="ph ph-check text-sm"></i> ${t('copied')}`;
       btn.classList.remove('text-blue-600', 'hover:text-blue-800');
@@ -231,7 +196,11 @@ exportBtn.addEventListener('click', () => {
 
   const csvContent = [
     ['#', 'data-test-id', t('elementType')],
-    ...scannedData.map((item, index) => [index + 1, item.dataTestId, item.tagName])
+    ...scannedData.map((item, index) => [
+      index + 1,
+      item.dataTestId,
+      item.tagName,
+    ]),
   ]
     .map((row) => row.map((cell) => `"${cell}"`).join(','))
     .join('\n');
