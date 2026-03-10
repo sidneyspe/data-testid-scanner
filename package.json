@@ -18,17 +18,24 @@
   ],
   "scripts": {
     "dev": "echo 'Para desenvolvimento, carregue a extensão em chrome://extensions/'",
-    "build": "echo 'Build automático não necessário para extensões de conteúdo estático'",
+    "build": "npm run package:crx",
     "lint": "eslint src/ --fix",
     "format": "prettier --write \"src/**/*.{js,html,css}\"",
-    "test": "echo 'Abra test/test-page.html no navegador para testar'"
+    "test": "echo 'Abra test/test-page.html no navegador para testar'",
+    "package:crx": "node scripts/build-crx.js"
   },
   "devDependencies": {
+    "adm-zip": "^0.5.16",
+    "chrome-extension-cli": "^1.5.0",
     "eslint": "^8.0.0",
     "prettier": "^3.0.0"
   },
   "browserslist": [
     "chrome >= 88",
     "edge >= 88"
-  ]
+  ],
+  "dependencies": {
+    "concurrently": "^9.2.1",
+    "wait-on": "^9.0.4"
+  }
 }

@@ -20,14 +20,26 @@ Browser extension for Chrome and Edge that scans and lists all `data-test-id` at
 
 ## Installation
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/sidneyspe/data-testid-scanner.git
-   ```
-2. Open `chrome://extensions/` in Chrome (or `edge://extensions/` in Edge)
-3. Enable **Developer mode**
-4. Click **Load unpacked** and select the project root folder
-5. The extension icon appears in the toolbar
+### Option 1: Install from CRX file ⭐ Recommended
+
+**Drag & drop installation — simplest method:**
+
+1. Download `data-test-id-scanner-vX.X.X.crx` from [Releases](https://github.com/sidneyspe/data-testid-scanner/releases)
+2. **Chrome**: Open `chrome://extensions/` | **Edge**: Open `edge://extensions/`
+3. Enable **Developer mode** (toggle in top-right)
+4. **Drag the CRX file** into the extensions page
+5. Click **Add extension** when prompted
+6. Pin the extension to your toolbar if desired
+
+> 💡 CRX files are pre-packaged extensions signed with a PEM key. Single-file installation — no extraction needed.
+
+### Option 2: Clone repository (For developers)
+
+```bash
+git clone https://github.com/sidneyspe/data-testid-scanner.git
+```
+
+Then follow steps 3-6 from Option 2.
 
 ## Usage
 
@@ -117,16 +129,36 @@ npm run format
 
 # Test — open the demo page in the browser
 npm run test
+
+# Package — create ZIP for distribution
+npm run package
 ```
 
 To test changes, reload the extension in `chrome://extensions/` after modifying files.
 
+## Building for Distribution
+
+Create the release artifact (CRX):
+
+```bash
+npm run package:crx
+```
+
+This creates:
+
+- `data-test-id-scanner-vX.X.X.crx` — **Release artifact** ready for distribution
+- `data-test-id-scanner.pem` — Private key (⚠️ keep safe! needed for updates)
+
+> ⚠️ **Security**: The `.pem` file is in `.gitignore` and will never be committed. Store it securely for future updates.
+
+The `.crx` file can be uploaded to GitHub Releases or shared directly.
+
 ## Browser Support
 
 | Browser | Minimum Version |
-|---------|----------------|
-| Chrome  | 88+            |
-| Edge    | 88+            |
+| ------- | --------------- |
+| Chrome  | 88+             |
+| Edge    | 88+             |
 
 ## License
 

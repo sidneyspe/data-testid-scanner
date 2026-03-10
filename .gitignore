@@ -3,11 +3,6 @@ node_modules/
 package-lock.json
 yarn.lock
 
-# Artefatos de build
-dist/
-build/
-out/
-
 # Ambiente local
 .env
 .env.local
@@ -18,17 +13,9 @@ out/
 .idea/
 *.swp
 *.swo
-*~
-.DS_Store
-Thumbs.db
 
-# Testes
-coverage/
-.nyc_output/
-
-# Extensão
-*.crx
-*.zip
+# Chave privada da extensão
+*.pem
 
 # Logs
 *.log
@@ -40,12 +27,8 @@ yarn-error.log*
 .tmp/
 tmp/
 temp/
+*.tmp
 
-# macOS
+# Sistema operacional
 .DS_Store
-.AppleDouble
-.LSOverride
-
-# Windows
 Thumbs.db
-ehthumbs.db
