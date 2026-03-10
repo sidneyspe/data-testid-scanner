@@ -148,6 +148,15 @@
   margin: 0;
   padding: 0;
   font-family: var(--font-family);
+  /* Impedir que box-shadow global da página afete o sidebar */
+  box-shadow: none !important;
+}
+
+/* Reset para todos elementos filhos - impedir herança de box-shadow */
+#data-testid-scanner-sidebar *,
+#data-testid-scanner-sidebar *::before,
+#data-testid-scanner-sidebar *::after {
+  box-shadow: none !important;
 }
 
 #data-testid-scanner-sidebar h1,
@@ -237,7 +246,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--shadow-lg) !important;
   transition: all var(--transition-base);
   padding: 0;
   margin: 0;
@@ -251,7 +260,7 @@
 
 .dts-toggle-btn:hover {
   background-color: var(--color-primary-dark);
-  box-shadow: var(--shadow-xl);
+  box-shadow: var(--shadow-xl) !important;
   transform: scale(1.08);
 }
 
@@ -267,7 +276,7 @@
   background-color: var(--color-primary-dark);
   box-shadow:
     0 0 0 3px rgba(102, 126, 234, 0.3),
-    var(--shadow-lg);
+    var(--shadow-lg) !important;
 }
 
 /* ====================================
@@ -464,7 +473,7 @@
 
 #data-testid-scanner-sidebar .dts-btn--primary:hover:not(:disabled) {
   background-color: var(--color-primary-dark);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-md) !important;
   transform: translateY(-1px);
 }
 
@@ -480,7 +489,7 @@
 
 #data-testid-scanner-sidebar .dts-btn--success:hover:not(:disabled) {
   background-color: var(--color-success-dark);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-md) !important;
   transform: translateY(-1px);
 }
 
@@ -492,7 +501,7 @@
 
 #data-testid-scanner-sidebar .dts-btn--danger:hover:not(:disabled) {
   background-color: var(--color-danger-dark);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-md) !important;
   transform: translateY(-1px);
 }
 
