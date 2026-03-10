@@ -132,6 +132,7 @@
 
 /* ====================================
    RESET ESCOPADO - Apenas elementos DTS
+   Garante isolamento sem quebrar estilos dos ícones
    ==================================== */
 #data-testid-scanner-sidebar *,
 #data-testid-scanner-sidebar *::before,
@@ -140,20 +141,20 @@
 .dts-toggle-btn::before,
 .dts-toggle-btn::after {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-/* Reset inherit properties que podem ser afetadas pelo host */
-#data-testid-scanner-sidebar,
-.dts-toggle-btn {
-  all: revert;
-  box-sizing: border-box;
-}
-
-#data-testid-scanner-sidebar *,
-#data-testid-scanner-sidebar *::before,
-#data-testid-scanner-sidebar *::after {
-  all: revert;
-  box-sizing: border-box;
+/* Resets específicos para headings e paragraphs */
+#data-testid-scanner-sidebar h1,
+#data-testid-scanner-sidebar h2,
+#data-testid-scanner-sidebar h3,
+#data-testid-scanner-sidebar h4,
+#data-testid-scanner-sidebar h5,
+#data-testid-scanner-sidebar h6,
+#data-testid-scanner-sidebar p {
+  margin: 0;
+  padding: 0;
 }
 
 /* ====================================
