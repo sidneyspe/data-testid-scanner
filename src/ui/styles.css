@@ -157,6 +157,16 @@
   padding: 0;
 }
 
+/* Garantir que ícones Phosphor apareçam corretamente */
+#data-testid-scanner-sidebar .ph,
+#data-testid-scanner-sidebar .ph::before {
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+  vertical-align: -0.125em;
+  font-family: "Phosphor" !important;
+}
+
 /* ====================================
    SIDEBAR CONTAINER
    ==================================== */
