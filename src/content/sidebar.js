@@ -50,7 +50,7 @@ if (window.__DTS_LOADED__) {
         // Emitir evento de conclusão (sidebar-controller.js escuta isso)
         window.dispatchEvent(new CustomEvent('dts-ready'));
       } catch (error) {
-        console.error('Erro ao inicializar Data-TestID Scanner:', error);
+        // Error silently
       }
     }
 
@@ -92,7 +92,6 @@ if (window.__DTS_LOADED__) {
           document.body.appendChild(tempDiv.firstElementChild);
         }
       } catch (error) {
-        console.error('[DTS] ❌ Erro ao injetar HTML:', error);
         throw error;
       }
     }
@@ -116,7 +115,7 @@ if (window.__DTS_LOADED__) {
         const loadedFont = await fontFace.load();
         document.fonts.add(loadedFont);
       } catch (error) {
-        console.error('[DTS] ❌ Erro ao carregar Phosphor font:', error);
+        // Error silently
       }
 
       // 2. Carregar o CSS de classes dos ícones
@@ -154,17 +153,12 @@ if (window.__DTS_LOADED__) {
       this.sidebarVisible = !this.sidebarVisible;
 
       if (this.sidebarVisible) {
-        sidebar.classList.remove('dts-sidebar--hidden');
+        sidebar.classList.add('dts-sidebar--visible');
         document.body.classList.add('dts-sidebar-open');
-        sidebar.style.animation = 'slideIn 0.3s ease-out';
         if (toggleBtn) toggleBtn.classList.add('dts-toggle-btn--active');
       } else {
-        sidebar.style.animation = 'slideOut 0.3s ease-out forwards';
+        sidebar.classList.remove('dts-sidebar--visible');
         document.body.classList.remove('dts-sidebar-open');
-        setTimeout(() => {
-          sidebar.classList.add('dts-sidebar--hidden');
-          sidebar.style.animation = '';
-        }, 300);
         if (toggleBtn) toggleBtn.classList.remove('dts-toggle-btn--active');
       }
     }

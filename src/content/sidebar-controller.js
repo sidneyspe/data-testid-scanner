@@ -88,17 +88,6 @@
           'dts-sort-missing-context',
         ),
       };
-
-      if (!this.elements.scanBtn) {
-        console.error(
-          '[DTS] ❌ ERRO CRÍTICO: scanBtn não encontrado! Verifique o ID #dts-scan-btn em sidebar.html',
-        );
-      }
-      if (!this.elements.languageSelect) {
-        console.error(
-          '[DTS] ❌ ERRO CRÍTICO: languageSelect não encontrado! Verifique o ID #dts-language-select em sidebar.html',
-        );
-      }
     }
 
     /**
@@ -129,9 +118,9 @@
 
         // Botão Fechar
         if (this.elements.closeBtn) {
-          this.elements.closeBtn.addEventListener('click', () =>
-            this.closeSidebar(),
-          );
+          this.elements.closeBtn.addEventListener('click', () => {
+            window.dispatchEvent(new CustomEvent('dts-toggle-sidebar'));
+          });
         }
 
         // Tabs
@@ -256,7 +245,7 @@
           });
         }
       } catch (error) {
-        console.error('[DTS] ❌ Erro ao configurar event listeners:', error);
+        // Error silently
       }
     }
 
@@ -321,7 +310,6 @@
           );
         }
       } catch (error) {
-        console.error('[DTS] ❌ Erro ao escanear:', error);
         this.showAlert(`${this.t('scanError')}`, 'error');
       } finally {
         this.setButtonLoading(this.elements.scanBtn, false);
@@ -802,6 +790,23 @@
         'dts-panel--active',
         tab === 'missing',
       );
+
+      // Atualizar total no footer baseado na aba ativa
+      if (tab === 'found') {
+        const dataToRender =
+          this.filteredData.length > 0 || this.searchQuery
+            ? this.filteredData
+            : this.scannedData;
+        this.elements.totalCount.textContent = dataToRender.length;
+      } else {
+        const dataToRender =
+          this.filteredMissingData.length > 0 ||
+          this.sortMissingElementOrder !== 'none' ||
+          this.sortMissingContextOrder !== 'none'
+            ? this.filteredMissingData
+            : this.missingData;
+        this.elements.totalCount.textContent = dataToRender.length;
+      }
     }
 
     /**

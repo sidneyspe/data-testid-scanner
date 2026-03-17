@@ -205,35 +205,43 @@
   font-size: var(--font-size-base);
   line-height: var(--line-height-normal);
   overflow: visible;
-  animation: slideIn var(--transition-slow) ease-out;
+  transform: translateX(100%);
+  transition: transform var(--transition-slow) ease-out;
+}
+
+#data-testid-scanner-sidebar.dts-sidebar--visible {
   transform: translateX(0);
 }
 
-@keyframes slideIn {
-  from {
-    transform: translateX(100%);
-  }
-  to {
-    transform: translateX(0);
-  }
+/* Classe aplicado ao body quando sidebar está aberto */
+body {
+  transition:
+    margin-right var(--transition-slow) ease-out,
+    margin-bottom var(--transition-slow) ease-out;
 }
 
-@keyframes slideOut {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(100%);
-  }
+body.dts-sidebar-open {
+  margin-right: 520px !important;
+}
+
+#data-testid-scanner-sidebar.dts-sidebar--visible {
+  margin-right: 0;
 }
 
 #data-testid-scanner-sidebar.dts-sidebar--hidden {
-  display: none;
+  margin-right: -520px;
 }
 
-/* Classe aplicada ao body quando sidebar está aberto */
+/* Classe aplicado ao body quando sidebar está aberto */
+body {
+  transition:
+    margin-right var(--transition-slow) ease-out,
+    width var(--transition-slow) ease-out;
+}
+
 body.dts-sidebar-open {
-  padding-right: 520px !important;
+  margin-right: 520px !important;
+  width: calc(100% - 520px) !important;
 }
 
 /* Container wrapper para preservar layout da página */
@@ -1006,16 +1014,22 @@ body.dts-sidebar-open [style*="position:fixed"] {
   #data-testid-scanner-sidebar {
     width: 100vw;
     right: 0;
+    left: 0;
     bottom: 0;
     top: auto;
     height: 60vh;
     border-left: none;
     border-top: 1px solid var(--color-border-light);
+    transform: translateY(100%);
+  }
+
+  #data-testid-scanner-sidebar.dts-sidebar--visible {
+    transform: translateY(0);
   }
 
   body.dts-sidebar-open {
-    padding-right: 0 !important;
-    padding-bottom: 60vh !important;
+    margin-right: 0 !important;
+    margin-bottom: 60vh !important;
   }
 
   .dts-header__top {

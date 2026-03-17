@@ -297,8 +297,8 @@ copyBtn.addEventListener('click', () => {
 
 // Função auxiliar para copiar para o clipboard
 function copyToClipboard(text) {
-  navigator.clipboard.writeText(text).catch((err) => {
-    console.error('Erro ao copiar:', err);
+  navigator.clipboard.writeText(text).catch(() => {
+    // Error silently
   });
 }
 
