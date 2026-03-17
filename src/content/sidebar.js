@@ -155,10 +155,12 @@ if (window.__DTS_LOADED__) {
 
       if (this.sidebarVisible) {
         sidebar.classList.remove('dts-sidebar--hidden');
+        document.body.classList.add('dts-sidebar-open');
         sidebar.style.animation = 'slideIn 0.3s ease-out';
         if (toggleBtn) toggleBtn.classList.add('dts-toggle-btn--active');
       } else {
         sidebar.style.animation = 'slideOut 0.3s ease-out forwards';
+        document.body.classList.remove('dts-sidebar-open');
         setTimeout(() => {
           sidebar.classList.add('dts-sidebar--hidden');
           sidebar.style.animation = '';
