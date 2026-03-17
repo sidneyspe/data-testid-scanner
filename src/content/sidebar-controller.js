@@ -297,7 +297,12 @@
         const tagName = el.tagName.toLowerCase();
         const context = this.getElementContext(el);
 
-        missing.push({ tagName, context, element: el });
+        missing.push({ 
+          tagName, 
+          context, 
+          contextRaw: context, // Armazenar contexto original sem escape
+          element: el 
+        });
       });
 
       return missing;
@@ -324,13 +329,13 @@
 
       // Links
       if (tag === 'a') {
-        const text = el.textContent.trim().substring(0, 30);
+        const text = el.textContent.trim();
         if (text) parts.push(`"${text}"`);
       }
 
       // Botões
       if (tag === 'button' || el.getAttribute('role') === 'button') {
-        const text = el.textContent.trim().substring(0, 30);
+        const text = el.textContent.trim();
         const label = el.getAttribute('aria-label');
         if (text) parts.push(`"${text}"`);
         else if (label) parts.push(`aria="${label}"`);
@@ -563,7 +568,9 @@
               <td class="dts-table__id">
                 <code class="dts-table__id-code dts-table__id-code--missing">&lt;${this.escapeHtml(item.tagName)}&gt;</code>
               </td>
-              <td class="dts-table__context">${this.escapeHtml(item.context)}</td>
+              <td>
+                <div class="dts-table__context dts-tooltip">${this.escapeHtml(item.context)}</div>
+              </td>
             </tr>
           `,
         )
@@ -581,6 +588,66 @@
         row.addEventListener('mouseleave', () => {
           el.style.outline = '';
           el.style.outlineOffset = '';
+        });
+      });
+
+      // Setup tooltips
+      this.setupTooltips();
+    }
+
+    /**
+     * Configura tooltips flutuantes
+     */
+    setupTooltips() {
+      // Remove tooltips existentes
+      const existingTooltip = document.querySelector('.dts-tooltip-floating');
+      const existingArrow = document.querySelector('.dts-tooltip-arrow');
+      if (existingTooltip) existingTooltip.remove();
+      if (existingArrow) existingArrow.remove();
+
+      // Criar elementos do tooltip
+      const tooltip = document.createElement('div');
+      tooltip.className = 'dts-tooltip-floating';
+      const arrow = document.createElement('div');
+      arrow.className = 'dts-tooltip-arrow';
+
+      this.elements.sidebar.appendChild(tooltip);
+      this.elements.sidebar.appendChild(arrow);
+
+      // Configurar event listeners para cada tooltip
+      const tooltipElements =
+        this.elements.missingBody.querySelectorAll('.dts-tooltip');
+
+      tooltipElements.forEach((element) => {
+        element.addEventListener('mouseenter', (e) => {
+          const text = element.getAttribute('data-tooltip');
+          tooltip.textContent = text;
+          tooltip.classList.add('dts-visible');
+          arrow.classList.add('dts-visible');
+
+          // Posicionar tooltip
+          const rect = element.getBoundingClientRect();
+          const sidebarRect = this.elements.sidebar.getBoundingClientRect();
+
+          // Posicionar acima do elemento
+          const tooltipTop = rect.top - tooltip.offsetHeight - 8;
+          const tooltipLeft =
+            rect.left + rect.width / 2 - tooltip.offsetWidth / 2;
+
+          tooltip.style.top = `${tooltipTop - sidebarRect.top}px`;
+          tooltip.style.left = `${tooltipLeft - sidebarRect.left}px`;
+
+          // Posicionar seta
+          const arrowTop = rect.top - arrow.offsetHeight - 2;
+          const arrowLeft = rect.left + rect.width / 2 - arrow.offsetWidth / 2;
+
+          arrow.style.top = `${arrowTop - sidebarRect.top}px`;
+          arrow.style.left = `${arrowLeft - sidebarRect.left}px`;
+        });
+
+        element.addEventListener('mouseleave', () => {
+          tooltip.classList.remove('dts-visible');
+          arrow.classList.remove('dts-visible');
         });
       });
     }
@@ -762,6 +829,13 @@
       const icon = this.elements.themeBtn.querySelector('i');
       icon.className = isDark ? 'ph ph-sun' : 'ph ph-moon';
 
+      // Atualizar cores da seta do tooltip se existir
+      const arrow = document.querySelector('.dts-tooltip-arrow');
+      if (arrow && !arrow.classList.contains('dts-visible')) {
+        arrow.style.borderTopColor = 'var(--color-tooltip-bg)';
+        arrow.style.borderBottomColor = 'transparent';
+      }
+
       // Persistir preferência no localStorage
       localStorage.setItem('dts_theme', isDark ? 'dark' : 'light');
     }
@@ -785,10 +859,165 @@
     }
 
     /**
-     * Fecha o sidebar (esconde, não remove)
+     * Configura tooltips flutuantes
      */
-    closeSidebar() {
-      window.dispatchEvent(new CustomEvent('dts-toggle-sidebar'));
+    setupTooltips() {
+      // Remove tooltips existentes
+      const existingTooltip = document.querySelector('.dts-tooltip-floating');
+      const existingArrow = document.querySelector('.dts-tooltip-arrow');
+      if (existingTooltip) existingTooltip.remove();
+      if (existingArrow) existingArrow.remove();
+
+      // Criar elementos do tooltip
+      const tooltip = document.createElement('div');
+      tooltip.className = 'dts-tooltip-floating';
+      const arrow = document.createElement('div');
+      arrow.className = 'dts-tooltip-arrow';
+      
+      this.elements.sidebar.appendChild(tooltip);
+      this.elements.sidebar.appendChild(arrow);
+
+      // Configurar event listeners para cada tooltip
+      const tooltipElements = this.elements.missingBody.querySelectorAll('.dts-tooltip');
+      
+      tooltipElements.forEach((element) => {
+        element.addEventListener('mouseenter', () => {
+          // Pegar o conteúdo HTML e decodificar para obter o texto completo
+          let tooltipContent = element.innerHTML;
+          
+          // Criar um div temporário para decodificar HTML entities
+          const tempDiv = document.createElement('div');
+          tempDiv.innerHTML = tooltipContent;
+          tooltipContent = tempDiv.textContent;
+          
+          tooltip.textContent = tooltipContent;
+          tooltip.classList.add('dts-visible');
+          arrow.classList.add('dts-visible');
+
+          // Duplo requestAnimationFrame para garantir que o tooltip foi renderizado com quebra de linha
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              const rect = element.getBoundingClientRect();
+              const sidebarRect = this.elements.sidebar.getBoundingClientRect();
+              
+              // Posicionar tooltip acima do elemento
+              let tooltipTop = rect.top - tooltip.offsetHeight - 8;
+              let tooltipLeft = rect.left + (rect.width / 2) - (tooltip.offsetWidth / 2);
+              
+              // Ajustar se sair da esquerda
+              if (tooltipLeft < 8) {
+                tooltipLeft = 8;
+              }
+              // Ajustar se sair da direita
+              if (tooltipLeft + tooltip.offsetWidth > sidebarRect.width - 8) {
+                tooltipLeft = sidebarRect.width - tooltip.offsetWidth - 8;
+              }
+              // Ajustar se sair por cima - mostrar abaixo
+              if (tooltipTop < 8) {
+                tooltipTop = rect.bottom + 8;
+                // Mudar a seta para apontar para cima
+                arrow.style.borderTopColor = 'transparent';
+                arrow.style.borderBottomColor = 'var(--color-tooltip-bg)';
+                arrow.style.top = `${tooltipTop - 12}px`;
+              } else {
+                // Seta normal apontando para baixo
+                arrow.style.borderTopColor = 'var(--color-tooltip-bg)';
+                arrow.style.borderBottomColor = 'transparent';
+              }
+              
+              tooltip.style.top = `${tooltipTop}px`;
+              tooltip.style.left = `${tooltipLeft}px`;
+
+              // Posicionar seta
+              if (tooltipTop >= 8) {
+                const arrowTop = tooltipTop + tooltip.offsetHeight;
+                const arrowLeft = rect.left + (rect.width / 2) - 6;
+                arrow.style.top = `${arrowTop}px`;
+                arrow.style.left = `${arrowLeft}px`;
+              }
+            });
+          });
+        });
+          requestAnimationFrame(() => {
+            const rect = element.getBoundingClientRect();
+            const sidebarRect = this.elements.sidebar.getBoundingClientRect();
+            
+            // Posicionar tooltip acima do elemento
+            let tooltipTop = rect.top - tooltip.offsetHeight - 8;
+            let tooltipLeft = rect.left + (rect.width / 2) - (tooltip.offsetWidth / 2);
+            
+            // Ajustar se sair da esquerda
+            if (tooltipLeft < 8) {
+              tooltipLeft = 8;
+            }
+            // Ajustar se sair da direita
+            if (tooltipLeft + tooltip.offsetWidth > sidebarRect.width - 8) {
+              tooltipLeft = sidebarRect.width - tooltip.offsetWidth - 8;
+            }
+            // Ajustar se sair por cima
+            if (tooltipTop < 8) {
+              tooltipTop = rect.bottom + 8;
+              // Mudar a seta para apontar para cima
+              arrow.style.borderTopColor = 'transparent';
+              arrow.style.borderBottomColor = 'var(--color-text-primary)';
+              arrow.style.top = `${tooltipTop - 6}px`;
+            } else {
+              // Seta normal apontando para baixo
+              arrow.style.borderTopColor = 'var(--color-text-primary)';
+              arrow.style.borderBottomColor = 'transparent';
+            }
+            
+            tooltip.style.top = `${tooltipTop}px`;
+            tooltip.style.left = `${tooltipLeft}px`;
+
+            // Posicionar seta
+            if (tooltipTop >= 8) {
+              const arrowTop = tooltipTop + tooltip.offsetHeight;
+              const arrowLeft = rect.left + (rect.width / 2) - 6;
+              arrow.style.top = `${arrowTop}px`;
+              arrow.style.left = `${arrowLeft}px`;
+            }
+          });
+        });
+
+        element.addEventListener('mouseleave', () => {
+          tooltip.classList.remove('dts-visible');
+          arrow.classList.remove('dts-visible');
+          
+          // Resetar estilos da seta
+          setTimeout(() => {
+            arrow.style.borderTopColor = 'var(--color-tooltip-bg)';
+            arrow.style.borderBottomColor = 'transparent';
+          }, 300);
+        });
+      });
+    }
+            // Ajustar se sair da direita
+            if (tooltipLeft + tooltip.offsetWidth > sidebarRect.width - 8) {
+              tooltipLeft = sidebarRect.width - tooltip.offsetWidth - 8;
+            }
+            // Ajustar se sair por cima
+            if (tooltipTop < 8) {
+              tooltipTop = rect.bottom + 8;
+            }
+
+            tooltip.style.top = `${tooltipTop}px`;
+            tooltip.style.left = `${tooltipLeft}px`;
+
+            // Posicionar seta
+            const arrowTop = tooltipTop + tooltip.offsetHeight;
+            const arrowLeft = rect.left + rect.width / 2 - 6;
+
+            arrow.style.top = `${arrowTop}px`;
+            arrow.style.left = `${arrowLeft}px`;
+          });
+        });
+
+        element.addEventListener('mouseleave', () => {
+          tooltip.classList.remove('dts-visible');
+          arrow.classList.remove('dts-visible');
+        });
+      });
     }
 
     /**

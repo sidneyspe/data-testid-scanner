@@ -41,6 +41,10 @@
   --color-tag-bg: #f3e8ff;
   --color-tag-text: #6b21a8;
 
+  /* Tooltip */
+  --color-tooltip-bg: #1a202c;
+  --color-tooltip-text: #ffffff;
+
   /* Espaçamento */
   --spacing-xs: 4px;
   --spacing-sm: 8px;
@@ -124,6 +128,9 @@
   --color-tag-bg: #2e1a4a;
   --color-tag-text: #c4b5fd;
 
+  --color-tooltip-bg: #e2e8f0;
+  --color-tooltip-text: #1a202c;
+
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
@@ -197,7 +204,7 @@
   font-family: var(--font-family);
   font-size: var(--font-size-base);
   line-height: var(--line-height-normal);
-  overflow: hidden;
+  overflow: visible;
   animation: slideIn var(--transition-slow) ease-out;
   transform: translateX(0);
 }
@@ -800,6 +807,10 @@ body.dts-sidebar-open [style*="position:fixed"] {
   text-align: left;
 }
 
+#data-testid-scanner-sidebar .dts-table td:has(.dts-tooltip) {
+  overflow: visible;
+}
+
 #data-testid-scanner-sidebar .dts-table__index {
   color: var(--color-text-tertiary);
   font-family: "Monaco", "Menlo", "Ubuntu Mono", monospace;
@@ -886,9 +897,34 @@ body.dts-sidebar-open [style*="position:fixed"] {
 #data-testid-scanner-sidebar .dts-table__context {
   font-size: var(--font-size-xs);
   color: var(--color-text-tertiary);
-  overflow: hidden;
-  text-overflow: ellipsis;
+  overflow-x: auto;
+  overflow-y: hidden;
   white-space: nowrap;
+  max-width: 100%;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
+  position: relative;
+  cursor: help;
+  line-height: 1.5;
+  padding: 4px 0;
+}
+
+#data-testid-scanner-sidebar .dts-table__context::-webkit-scrollbar {
+  height: 4px;
+}
+
+#data-testid-scanner-sidebar .dts-table__context::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+#data-testid-scanner-sidebar .dts-table__context::-webkit-scrollbar-thumb {
+  background-color: var(--color-border);
+  border-radius: 2px;
+}
+
+#data-testid-scanner-sidebar
+  .dts-table__context::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-text-tertiary);
 }
 
 /* Empty State */
@@ -1005,8 +1041,52 @@ body.dts-sidebar-open [style*="position:fixed"] {
 }
 
 /* ====================================
-   SCROLL BAR STYLING
-   ==================================== */
+    TOOLTIP
+    ==================================== */
+#data-testid-scanner-sidebar .dts-tooltip {
+  position: relative;
+  cursor: help;
+}
+
+#data-testid-scanner-sidebar .dts-tooltip-floating {
+  position: absolute;
+  padding: var(--spacing-sm) var(--spacing-md);
+  background-color: var(--color-tooltip-bg);
+  color: var(--color-tooltip-text);
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  border-radius: var(--radius-md);
+  white-space: normal;
+  word-wrap: break-word;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  max-width: 350px;
+  z-index: 9999;
+  pointer-events: none;
+  box-shadow: var(--shadow-lg);
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+  line-height: 1.4;
+}
+
+#data-testid-scanner-sidebar .dts-tooltip-arrow {
+  position: absolute;
+  border: 6px solid transparent;
+  border-top-color: var(--color-tooltip-bg);
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+
+#data-testid-scanner-sidebar .dts-tooltip-floating.dts-visible,
+#data-testid-scanner-sidebar .dts-tooltip-arrow.dts-visible {
+  opacity: 1;
+}
+
+/* ====================================
+    SCROLL BAR STYLING
+    ==================================== */
 #data-testid-scanner-sidebar .dts-table-container {
   scrollbar-width: thin;
   scrollbar-color: var(--color-border) var(--color-bg-secondary);
