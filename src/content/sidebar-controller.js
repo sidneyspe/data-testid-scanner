@@ -264,6 +264,7 @@
           this.scannedData.push({
             dataTestId: element.getAttribute('data-test-id'),
             tagName: element.tagName.toLowerCase(),
+            element: element,
           });
         });
 
@@ -646,6 +647,21 @@
         code.addEventListener('click', (e) => {
           const dataTestId = e.currentTarget.dataset.dataTestid;
           this.copyItemToClipboard(dataTestId, e.currentTarget);
+        });
+      });
+
+      // Hover highlight: ao passar o mouse na linha, destaca o elemento na página
+      this.elements.tableBody.querySelectorAll('tr').forEach((row, index) => {
+        const el = dataToRender[index]?.element;
+        if (!el) return;
+
+        row.addEventListener('mouseenter', () => {
+          el.style.outline = '3px solid #22c55e';
+          el.style.outlineOffset = '2px';
+        });
+        row.addEventListener('mouseleave', () => {
+          el.style.outline = '';
+          el.style.outlineOffset = '';
         });
       });
     }
