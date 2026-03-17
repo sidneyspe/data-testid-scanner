@@ -297,11 +297,11 @@
         const tagName = el.tagName.toLowerCase();
         const context = this.getElementContext(el);
 
-        missing.push({ 
-          tagName, 
-          context, 
+        missing.push({
+          tagName,
+          context,
           contextRaw: context, // Armazenar contexto original sem escape
-          element: el 
+          element: el,
         });
       });
 
@@ -873,23 +873,24 @@
       tooltip.className = 'dts-tooltip-floating';
       const arrow = document.createElement('div');
       arrow.className = 'dts-tooltip-arrow';
-      
+
       this.elements.sidebar.appendChild(tooltip);
       this.elements.sidebar.appendChild(arrow);
 
       // Configurar event listeners para cada tooltip
-      const tooltipElements = this.elements.missingBody.querySelectorAll('.dts-tooltip');
-      
+      const tooltipElements =
+        this.elements.missingBody.querySelectorAll('.dts-tooltip');
+
       tooltipElements.forEach((element) => {
         element.addEventListener('mouseenter', () => {
           // Pegar o conteúdo HTML e decodificar para obter o texto completo
           let tooltipContent = element.innerHTML;
-          
+
           // Criar um div temporário para decodificar HTML entities
           const tempDiv = document.createElement('div');
           tempDiv.innerHTML = tooltipContent;
           tooltipContent = tempDiv.textContent;
-          
+
           tooltip.textContent = tooltipContent;
           tooltip.classList.add('dts-visible');
           arrow.classList.add('dts-visible');
@@ -899,11 +900,12 @@
             requestAnimationFrame(() => {
               const rect = element.getBoundingClientRect();
               const sidebarRect = this.elements.sidebar.getBoundingClientRect();
-              
+
               // Posicionar tooltip acima do elemento
               let tooltipTop = rect.top - tooltip.offsetHeight - 8;
-              let tooltipLeft = rect.left + (rect.width / 2) - (tooltip.offsetWidth / 2);
-              
+              let tooltipLeft =
+                rect.left + rect.width / 2 - tooltip.offsetWidth / 2;
+
               // Ajustar se sair da esquerda
               if (tooltipLeft < 8) {
                 tooltipLeft = 8;
@@ -924,98 +926,30 @@
                 arrow.style.borderTopColor = 'var(--color-tooltip-bg)';
                 arrow.style.borderBottomColor = 'transparent';
               }
-              
+
               tooltip.style.top = `${tooltipTop}px`;
               tooltip.style.left = `${tooltipLeft}px`;
 
               // Posicionar seta
               if (tooltipTop >= 8) {
                 const arrowTop = tooltipTop + tooltip.offsetHeight;
-                const arrowLeft = rect.left + (rect.width / 2) - 6;
+                const arrowLeft = rect.left + rect.width / 2 - 6;
                 arrow.style.top = `${arrowTop}px`;
                 arrow.style.left = `${arrowLeft}px`;
               }
             });
           });
         });
-          requestAnimationFrame(() => {
-            const rect = element.getBoundingClientRect();
-            const sidebarRect = this.elements.sidebar.getBoundingClientRect();
-            
-            // Posicionar tooltip acima do elemento
-            let tooltipTop = rect.top - tooltip.offsetHeight - 8;
-            let tooltipLeft = rect.left + (rect.width / 2) - (tooltip.offsetWidth / 2);
-            
-            // Ajustar se sair da esquerda
-            if (tooltipLeft < 8) {
-              tooltipLeft = 8;
-            }
-            // Ajustar se sair da direita
-            if (tooltipLeft + tooltip.offsetWidth > sidebarRect.width - 8) {
-              tooltipLeft = sidebarRect.width - tooltip.offsetWidth - 8;
-            }
-            // Ajustar se sair por cima
-            if (tooltipTop < 8) {
-              tooltipTop = rect.bottom + 8;
-              // Mudar a seta para apontar para cima
-              arrow.style.borderTopColor = 'transparent';
-              arrow.style.borderBottomColor = 'var(--color-text-primary)';
-              arrow.style.top = `${tooltipTop - 6}px`;
-            } else {
-              // Seta normal apontando para baixo
-              arrow.style.borderTopColor = 'var(--color-text-primary)';
-              arrow.style.borderBottomColor = 'transparent';
-            }
-            
-            tooltip.style.top = `${tooltipTop}px`;
-            tooltip.style.left = `${tooltipLeft}px`;
-
-            // Posicionar seta
-            if (tooltipTop >= 8) {
-              const arrowTop = tooltipTop + tooltip.offsetHeight;
-              const arrowLeft = rect.left + (rect.width / 2) - 6;
-              arrow.style.top = `${arrowTop}px`;
-              arrow.style.left = `${arrowLeft}px`;
-            }
-          });
-        });
 
         element.addEventListener('mouseleave', () => {
           tooltip.classList.remove('dts-visible');
           arrow.classList.remove('dts-visible');
-          
+
           // Resetar estilos da seta
           setTimeout(() => {
             arrow.style.borderTopColor = 'var(--color-tooltip-bg)';
             arrow.style.borderBottomColor = 'transparent';
           }, 300);
-        });
-      });
-    }
-            // Ajustar se sair da direita
-            if (tooltipLeft + tooltip.offsetWidth > sidebarRect.width - 8) {
-              tooltipLeft = sidebarRect.width - tooltip.offsetWidth - 8;
-            }
-            // Ajustar se sair por cima
-            if (tooltipTop < 8) {
-              tooltipTop = rect.bottom + 8;
-            }
-
-            tooltip.style.top = `${tooltipTop}px`;
-            tooltip.style.left = `${tooltipLeft}px`;
-
-            // Posicionar seta
-            const arrowTop = tooltipTop + tooltip.offsetHeight;
-            const arrowLeft = rect.left + rect.width / 2 - 6;
-
-            arrow.style.top = `${arrowTop}px`;
-            arrow.style.left = `${arrowLeft}px`;
-          });
-        });
-
-        element.addEventListener('mouseleave', () => {
-          tooltip.classList.remove('dts-visible');
-          arrow.classList.remove('dts-visible');
         });
       });
     }

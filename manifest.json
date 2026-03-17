@@ -3,8 +3,6 @@
   "name": "Data-TestID Scanner",
   "version": "2.0.0",
   "description": "Escaneia e lista todos os data-test-id de uma página em sidebar interativo",
-  "author": "Data-TestID Scanner",
-  "key": "MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDOP2SDaYA1dOXhi9No69IMXRkkWsMl9L1VMc/rqvrv7zt8VqM6asONQWE5xgiS+jPP+w+bGrgkM0ffkGf5xAtnv4S9Cdip+jdo1M1R/wxwxBWxGnyXcmQiiWrlrSPzXxCRoJcDLjp7Wbs70MNA8DEFk/ScCB8U6g7mRY2yiLP8qP0cPV/S3J36nmRFqbHu9qhttwocixAIbYWsbAwSC+usOejSgu5HEMDZURKDK7KOieBuKKbvGTY54VZTNhiAgfmf1kDRacLoqWF4/zenF78Pg2boW8OEVyLq616Jr4hlCfJEOi10nlviE6cJwz92PSCupvC0i2EVpcf+D2Y+6Vh1AgMBAAECggEAZlsemnsmxiDUH0nB6x2xmjIv0pN6quEZf2jfq7EopR/AkVX73vdyQi2Sv1XRFoQ2Z37NAWhSv6B1iHWFrHZHRL9O9HQpAz5q9ks59HoTpfkiXMjs0UpTeLJjC0YQg+0Hb4ZXu5vbKTFgkvBpnlY1tfN2H2OGbV41c8FL77EZRgeAqyjygVyfZYD+DT89U+gwXMNWtAu/7v6fdApsfphFB2Lm6oJrS+2HhJ8X0pMsZYlLR0+UrVDfQaL15762xxTv/V5RXLdfKxjihOJaF5d6KH1j2gRWGnje6IVTfvf0qjh+ObvMNgL71MN/gJfe/gF/2sCKROQSrismlpiQySSZBwKBgQD83sZyaMDm094V2cu4WjX9mQjqaE6oIDJfBMj0VHDQkPIbeiGBSgepiq+H1bDvNMFAr7D3fj1X1xkQm4wQawobanGi8gvOtmfSBLD1S91/CB7gx1ii6MU8KJ5HMKc3GrM+dviK9cO/CJKA3a32+wb3w/I6pzK33eJA6WPY2tmCywKBgQDQzOSLnXEdF2xeojrPCITchU24YOf6Vk1uiQ0nb2zZ3dwY2TDL3dUUeO/MqauGKvkxgo395lI5ZOTbAkGxjUNUHhWpNd4KFveKaSxW4GBoHbfmDa35YFI95Ugq8rrMjnsD/VkTMqI55cTSYH48+I+iaFHiARisWTyKxzXjywLpvwKBgQCJNLeozH4ewUb3xD1twkUZXTghOIe1YgLy273OFSNBh+RWVGZpqKmPrNihc6mVoaJaXvo+0Bio2OWYxU2yeuH5DkCqkXsmpoKeyjzaXFfK3bUjcgb+Hh8nDUMUjamtlKc9dYBWphOYTCZyFdaW9I5LUd7VRHOYoKRrZDfxKo5rEQKBgBxZVUZnb+4lOf93Q0jMvU07hBvefGCOyyCQ1wpdpIfICZQOGQP08HNBID3HY5RpzT+dnC220b8dJb1ehxDWPyfylbpNqAHysFVIhk6dVDmOn2NKxC4xl7jzomLCZf5T8fvOsANdQo1d1uVBWKJqlQXV6BgpUfJEg2XMOlLdQ139AoGBAMG/D3xDPRRWkKMHkFfRCH1XGP1lwSPGCPN8+NQc8N2KdBNJvfA53lGVNI0bOH2zrZiS32jOebLLfgl/bxL3F0+YLHDuVXSiaPkUAWD6hLiKke4/xs2PDVNKOkk95DY4PStntq/HP7IG9aqJw8OHk8un70YbZs6l94VCu7gbRgGy",
 
   "permissions": ["activeTab", "scripting", "storage"],
 
@@ -25,7 +23,6 @@
         "src/content/sidebar.js",
         "src/content/sidebar-controller.js"
       ],
-      "css": [],
       "run_at": "document_end",
       "all_frames": false
     }

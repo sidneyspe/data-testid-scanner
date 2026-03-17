@@ -18,7 +18,7 @@
   ],
   "scripts": {
     "dev": "echo 'Para desenvolvimento, carregue a extensão em chrome://extensions/'",
-    "build": "python3 -m zipfile -c data-test-id-scanner.zip manifest.json assets/ src/ test/ README.md",
+    "build": "rm -rf dist && mkdir -p dist && cp -r manifest.json assets src README.md dist/ && cd dist && python3 -m zipfile -c ../data-test-id-scanner.zip . && cd .. && echo '✓ Extension packaged: data-test-id-scanner.zip'",
     "lint": "eslint src/ --fix",
     "format": "prettier --write \"src/**/*.{js,html,css}\"",
     "test": "echo 'Abra test/test-page.html no navegador para testar'"
