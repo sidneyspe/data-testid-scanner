@@ -99,17 +99,21 @@
         <thead>
           <tr>
             <th style="width: 36px; text-align: center">#</th>
-            <th style="width: calc(100% - 116px)">
+            <th style="width: auto; cursor: pointer" id="dts-sort-id">
               data-test-id
               <i
                 class="ph ph-info"
                 style="font-size: 14px; margin-left: 4px; cursor: help"
                 title="Clique no item para copiar para a área de transferência"
               ></i>
+              <i
+                class="ph ph-arrows-down-up"
+                style="font-size: 12px; margin-left: 4px"
+              ></i>
             </th>
             <th
               data-i18n="elementType"
-              style="width: 80px; cursor: pointer"
+              style="width: auto; white-space: nowrap; cursor: pointer"
               id="dts-sort-type"
             >
               Tipo
@@ -138,8 +142,28 @@
         <thead>
           <tr>
             <th style="width: 36px; text-align: center">#</th>
-            <th data-i18n="missingElement" style="width: 55%">Elemento</th>
-            <th data-i18n="missingContext">Contexto</th>
+            <th
+              data-i18n="missingElement"
+              style="width: auto; cursor: pointer"
+              id="dts-sort-missing-element"
+            >
+              Elemento
+              <i
+                class="ph ph-arrows-down-up"
+                style="font-size: 12px; margin-left: 4px"
+              ></i>
+            </th>
+            <th
+              data-i18n="missingContext"
+              style="width: auto; cursor: pointer"
+              id="dts-sort-missing-context"
+            >
+              Contexto
+              <i
+                class="ph ph-arrows-down-up"
+                style="font-size: 12px; margin-left: 4px"
+              ></i>
+            </th>
           </tr>
         </thead>
         <tbody id="dts-missing-body">

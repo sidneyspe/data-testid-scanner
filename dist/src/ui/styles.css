@@ -754,7 +754,7 @@ body.dts-sidebar-open [style*="position:fixed"] {
   width: 100%;
   border-collapse: collapse;
   font-size: var(--font-size-sm);
-  table-layout: fixed;
+  table-layout: auto;
   color: inherit;
   border-spacing: 0;
 }

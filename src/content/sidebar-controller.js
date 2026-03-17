@@ -37,6 +37,10 @@
       this.currentLanguage = 'pt';
       this.searchQuery = '';
       this.sortOrder = 'none';
+      this.sortIdOrder = 'none';
+      this.sortMissingElementOrder = 'none';
+      this.sortMissingContextOrder = 'none';
+      this.filteredMissingData = [];
     }
 
     /**
@@ -76,6 +80,13 @@
         missingBody: document.getElementById('dts-missing-body'),
         searchInput: document.getElementById('dts-search-input'),
         sortTypeBtn: document.getElementById('dts-sort-type'),
+        sortIdBtn: document.getElementById('dts-sort-id'),
+        sortMissingElementBtn: document.getElementById(
+          'dts-sort-missing-element',
+        ),
+        sortMissingContextBtn: document.getElementById(
+          'dts-sort-missing-context',
+        ),
       };
 
       if (!this.elements.scanBtn) {
@@ -178,6 +189,72 @@
             this.filterAndSortData();
           });
         }
+
+        // Botão de Ordenação por ID (data-test-id)
+        if (this.elements.sortIdBtn) {
+          this.elements.sortIdBtn.addEventListener('click', () => {
+            if (this.sortIdOrder === 'none') {
+              this.sortIdOrder = 'asc';
+            } else if (this.sortIdOrder === 'asc') {
+              this.sortIdOrder = 'desc';
+            } else {
+              this.sortIdOrder = 'none';
+            }
+            const icon = this.elements.sortIdBtn.querySelector('i:last-child');
+            if (this.sortIdOrder === 'asc') {
+              icon.className = 'ph ph-arrow-up';
+            } else if (this.sortIdOrder === 'desc') {
+              icon.className = 'ph ph-arrow-down';
+            } else {
+              icon.className = 'ph ph-arrows-down-up';
+            }
+            this.filterAndSortData();
+          });
+        }
+
+        // Botão de Ordenação por Elemento (painel missing)
+        if (this.elements.sortMissingElementBtn) {
+          this.elements.sortMissingElementBtn.addEventListener('click', () => {
+            if (this.sortMissingElementOrder === 'none') {
+              this.sortMissingElementOrder = 'asc';
+            } else if (this.sortMissingElementOrder === 'asc') {
+              this.sortMissingElementOrder = 'desc';
+            } else {
+              this.sortMissingElementOrder = 'none';
+            }
+            const icon = this.elements.sortMissingElementBtn.querySelector('i');
+            if (this.sortMissingElementOrder === 'asc') {
+              icon.className = 'ph ph-arrow-up';
+            } else if (this.sortMissingElementOrder === 'desc') {
+              icon.className = 'ph ph-arrow-down';
+            } else {
+              icon.className = 'ph ph-arrows-down-up';
+            }
+            this.filterAndSortMissingData();
+          });
+        }
+
+        // Botão de Ordenação por Contexto (painel missing)
+        if (this.elements.sortMissingContextBtn) {
+          this.elements.sortMissingContextBtn.addEventListener('click', () => {
+            if (this.sortMissingContextOrder === 'none') {
+              this.sortMissingContextOrder = 'asc';
+            } else if (this.sortMissingContextOrder === 'asc') {
+              this.sortMissingContextOrder = 'desc';
+            } else {
+              this.sortMissingContextOrder = 'none';
+            }
+            const icon = this.elements.sortMissingContextBtn.querySelector('i');
+            if (this.sortMissingContextOrder === 'asc') {
+              icon.className = 'ph ph-arrow-up';
+            } else if (this.sortMissingContextOrder === 'desc') {
+              icon.className = 'ph ph-arrow-down';
+            } else {
+              icon.className = 'ph ph-arrows-down-up';
+            }
+            this.filterAndSortMissingData();
+          });
+        }
       } catch (error) {
         console.error('[DTS] ❌ Erro ao configurar event listeners:', error);
       }
@@ -206,10 +283,11 @@
 
         // Inicializar filteredData
         this.filteredData = [...this.scannedData];
+        this.filteredMissingData = [...this.missingData];
 
         // Renderizar tabelas
         this.filterAndSortData();
-        this.renderMissingTable();
+        this.filterAndSortMissingData();
 
         // Atualizar badges das tabs
         this.elements.foundCount.textContent = this.scannedData.length;
@@ -469,6 +547,17 @@
         );
       }
 
+      // Ordenar por ID (data-test-id)
+      if (this.sortIdOrder !== 'none') {
+        this.filteredData.sort((a, b) => {
+          if (this.sortIdOrder === 'asc') {
+            return a.dataTestId.localeCompare(b.dataTestId);
+          } else {
+            return b.dataTestId.localeCompare(a.dataTestId);
+          }
+        });
+      }
+
       // Ordenar por tipo
       if (this.sortOrder !== 'none') {
         this.filteredData.sort((a, b) => {
@@ -481,6 +570,37 @@
       }
 
       this.renderTable();
+    }
+
+    /**
+     * Filtra e ordena os dados de elementos sem data-test-id
+     */
+    filterAndSortMissingData() {
+      this.filteredMissingData = [...this.missingData];
+
+      // Ordenar por elemento (tagName)
+      if (this.sortMissingElementOrder !== 'none') {
+        this.filteredMissingData.sort((a, b) => {
+          if (this.sortMissingElementOrder === 'asc') {
+            return a.tagName.localeCompare(b.tagName);
+          } else {
+            return b.tagName.localeCompare(a.tagName);
+          }
+        });
+      }
+
+      // Ordenar por contexto
+      if (this.sortMissingContextOrder !== 'none') {
+        this.filteredMissingData.sort((a, b) => {
+          if (this.sortMissingContextOrder === 'asc') {
+            return a.context.localeCompare(b.context);
+          } else {
+            return b.context.localeCompare(a.context);
+          }
+        });
+      }
+
+      this.renderMissingTable();
     }
 
     /**
@@ -548,7 +668,14 @@
     renderMissingTable() {
       if (!this.elements.missingBody) return;
 
-      if (this.missingData.length === 0) {
+      const dataToRender =
+        this.filteredMissingData.length > 0 ||
+        this.sortMissingElementOrder !== 'none' ||
+        this.sortMissingContextOrder !== 'none'
+          ? this.filteredMissingData
+          : this.missingData;
+
+      if (dataToRender.length === 0) {
         this.elements.missingBody.innerHTML = `
           <tr>
             <td colspan="3" class="dts-table__empty">
@@ -560,7 +687,7 @@
         return;
       }
 
-      this.elements.missingBody.innerHTML = this.missingData
+      this.elements.missingBody.innerHTML = dataToRender
         .map(
           (item, index) => `
             <tr>
@@ -578,7 +705,7 @@
 
       // Hover highlight: ao passar o mouse na linha, destaca o elemento na página
       this.elements.missingBody.querySelectorAll('tr').forEach((row, index) => {
-        const el = this.missingData[index]?.element;
+        const el = dataToRender[index]?.element;
         if (!el) return;
 
         row.addEventListener('mouseenter', () => {
