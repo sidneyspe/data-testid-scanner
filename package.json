@@ -19,14 +19,17 @@
   "scripts": {
     "dev": "echo 'Para desenvolvimento, carregue a extensão em chrome://extensions/'",
     "build": "rm -rf dist && mkdir -p dist && cp -r manifest.json assets src README.md dist/ && cd dist && python3 -m zipfile -c ../data-test-id-scanner.zip . && cd .. && echo '✓ Extension packaged: data-test-id-scanner.zip'",
+    "build:crx": "npm run build && node scripts/build-crx.js",
     "lint": "eslint src/ --fix",
     "format": "prettier --write \"src/**/*.{js,html,css}\"",
     "test": "echo 'Abra test/test-page.html no navegador para testar'"
   },
   "devDependencies": {
     "adm-zip": "^0.5.16",
+    "crx": "^5.0.1",
     "eslint": "^8.0.0",
-    "prettier": "^3.0.0"
+    "prettier": "^3.0.0",
+    "web-ext": "^10.0.0"
   },
   "browserslist": [
     "chrome >= 88",
